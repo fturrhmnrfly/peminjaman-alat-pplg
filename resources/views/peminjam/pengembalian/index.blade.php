@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Peminjaman</title>
+    <title>Pengembalian Alat</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -24,10 +24,9 @@
             min-height: 100vh;
         }
 
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: 260px;
-            background: linear-gradient(180deg, #1e3a8a, #1e40af);
+            background: linear-gradient(180deg, #0f766e, #0d9488);
             color: white;
             padding: 25px 20px;
             display: flex;
@@ -59,8 +58,8 @@
 
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            background: rgba(250, 204, 21, 0.15);
-            color: #fde68a;
+            background: rgba(16, 185, 129, 0.2);
+            color: #d1fae5;
         }
 
         .sidebar-footer {
@@ -69,7 +68,6 @@
             opacity: 0.8;
         }
 
-        /* ===== MAIN CONTENT ===== */
         .main {
             flex: 1;
             padding: 30px;
@@ -96,8 +94,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #facc15, #fde68a);
-            color: #1e3a8a;
+            background: linear-gradient(135deg, #34d399, #a7f3d0);
+            color: #065f46;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -111,16 +109,15 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
-        .header-action {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .header-action h2 {
+        .section-title {
             font-size: 22px;
             color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .section-desc {
+            color: #6b7280;
+            margin-bottom: 20px;
         }
 
         .alert {
@@ -150,50 +147,12 @@
             background: #f9fafb;
         }
 
-        table th {
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            color: #374151;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
+        table th,
         table td {
             padding: 12px;
             border-bottom: 1px solid #f3f4f6;
+            text-align: left;
             vertical-align: top;
-        }
-
-        table tbody tr:hover {
-            background: #f9fafb;
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            display: inline-block;
-        }
-
-        .badge-menunggu {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-
-        .badge-disetujui {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .badge-ditolak {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge-selesai {
-            background: #fef3c7;
-            color: #92400e;
         }
 
         .item-list {
@@ -222,11 +181,14 @@
             white-space: nowrap;
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 20px;
+        .btn-primary {
+            background: #0f766e;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
         }
 
         .logout-btn {
@@ -248,20 +210,15 @@
 </head>
 
 <body>
-
     <div class="layout">
-
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-brand">📚 Peminjaman Alat</div>
 
             <nav class="sidebar-menu">
                 <a href="{{ route('dashboard') }}">🏠 Dashboard</a>
-                <a href="{{ route('admin.user.index') }}">👥 User</a>
-                <a href="{{ route('admin.kategori.index') }}">📂 Kategori</a>
-                <a href="{{ route('admin.alat.index') }}">🛠️ Alat</a>
-                <a href="{{ route('admin.log.index') }}">📋 Log Aktivitas</a>
-                <a href="{{ route('admin.peminjaman.index') }}"class="active">📦 Data Peminjaman</a>
+                <a href="{{ route('peminjam.alat.index') }}">🧰 Daftar Alat</a>
+                <a href="{{ route('peminjaman.index') }}">📝 Ajukan Peminjaman</a>
+                <a href="{{ route('peminjam.pengembalian.index') }}" class="active">📦 Pengembalian</a>
             </nav>
 
             <form method="POST" action="{{ route('logout') }}" style="margin-top: auto;">
@@ -274,12 +231,9 @@
             </div>
         </aside>
 
-        <!-- MAIN -->
         <main class="main">
-
-            <!-- TOPBAR -->
             <div class="topbar">
-                <strong>Data Peminjaman</strong>
+                <strong>Pengembalian Alat</strong>
                 <div class="user-info">
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
@@ -288,10 +242,10 @@
                 </div>
             </div>
 
-            <!-- CONTENT -->
             <div class="content-card">
+                <h2 class="section-title">Daftar Alat Yang Sedang Dipinjam</h2>
+                <p class="section-desc">Ajukan pengembalian untuk peminjaman yang sudah disetujui.</p>
 
-                <!-- Alert Messages -->
                 @if(session('success'))
                 <div class="alert alert-success">
                     {{ session('success') }}
@@ -304,44 +258,18 @@
                 </div>
                 @endif
 
-                <div class="header-action">
-                    <h2>Daftar Peminjaman</h2>
-                </div>
-
                 <table>
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Peminjam</th>
-                            <th>Tanggal</th>
-                            <th>Status</th>
+                            <th>Tanggal Pinjam</th>
                             <th>Detail Alat</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($peminjaman as $index => $row)
+                        @forelse($peminjaman as $row)
                         <tr>
-                            <td>{{ $peminjaman->firstItem() + $index }}</td>
-                            <td>
-                                <strong>{{ $row->user->nama ?? '-' }}</strong>
-                                <div style="color: #6b7280; font-size: 12px;">
-                                    {{ $row->user->email ?? '-' }}
-                                </div>
-                            </td>
-                            <td>
-                                <div>Pinjam: {{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</div>
-                                <div>Kembali: {{ optional($row->tanggal_kembali)->format('d/m/Y') ?? '-' }}</div>
-                            </td>
-                            <td>
-                                @php
-                                    $status = strtolower($row->status ?? 'menunggu');
-                                    $badgeClass = 'badge-menunggu';
-                                    if ($status === 'disetujui') $badgeClass = 'badge-disetujui';
-                                    elseif ($status === 'ditolak') $badgeClass = 'badge-ditolak';
-                                    elseif ($status === 'selesai' || $status === 'dikembalikan') $badgeClass = 'badge-selesai';
-                                @endphp
-                                <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
-                            </td>
+                            <td>{{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</td>
                             <td>
                                 <div class="item-list">
                                     @forelse($row->detailPeminjamans as $detail)
@@ -354,27 +282,26 @@
                                     @endforelse
                                 </div>
                             </td>
+                            <td>
+                                <form method="POST" action="{{ route('peminjam.pengembalian.update', $row->id) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn-primary">Ajukan Pengembalian</button>
+                                </form>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 30px; color: #9ca3af;">
-                                Belum ada data peminjaman
+                            <td colspan="3" style="text-align: center; padding: 30px; color: #9ca3af;">
+                                Tidak ada peminjaman yang perlu dikembalikan
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
-
-                <!-- Pagination -->
-                <div class="pagination">
-                    {{ $peminjaman->links() }}
-                </div>
-
             </div>
-
         </main>
     </div>
-
 </body>
 
 </html>

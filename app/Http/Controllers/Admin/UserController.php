@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\LogAktivitas;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -33,13 +34,14 @@ class UserController extends Controller
             'role' => 'required|in:admin,petugas,peminjam',
         ]);
 
-        User::create([
+        $user = User::create([
             'nama' => $request->nama,
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'nis' => $request->nis,
             'role' => $request->role,
         ]);
+        LogAktivitas::catat('Create', 'User', "Menambah user: {$user->nama}");
 
         return redirect()->route('admin.user.index')->with('success', 'User berhasil ditambahkan!');
     }
@@ -74,6 +76,7 @@ class UserController extends Controller
         }
 
         $user->update($data);
+        LogAktivitas::catat('Update', 'User', "Update user: {$user->nama}");
 
         return redirect()->route('admin.user.index')->with('success', 'User berhasil diupdate!');
     }
@@ -86,7 +89,9 @@ class UserController extends Controller
             return redirect()->route('admin.user.index')->with('error', 'Tidak dapat menghapus user yang sedang login!');
         }
 
+        $namaUser = $user->nama;
         $user->delete();
+        LogAktivitas::catat('Delete', 'User', "Menghapus user: {$namaUser}");
         return redirect()->route('admin.user.index')->with('success', 'User berhasil dihapus!');
     }
 }

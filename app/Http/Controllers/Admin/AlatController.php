@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Alat;
 use App\Models\Kategori;
+use App\Models\LogAktivitas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -48,11 +49,11 @@ class AlatController extends Controller
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/alat', $filename);
-            $data['foto'] = $filename;
+            $data['foto'] = $file->storeAs('alat', $filename, 'public');
         }
 
-        Alat::create($data);
+        $alat = Alat::create($data);
+        LogAktivitas::catat('Create', 'Alat', "Menambah alat: {$alat->nama_alat}");
 
         return redirect()->route('admin.alat.index')->with('success', 'Alat berhasil ditambahkan!');
     }
@@ -88,16 +89,16 @@ class AlatController extends Controller
         if ($request->hasFile('foto')) {
             // Hapus foto lama
             if ($alat->foto) {
-                Storage::delete('public/alat/' . $alat->foto);
+                Storage::disk('public')->delete($alat->foto);
             }
 
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/alat', $filename);
-            $data['foto'] = $filename;
+            $data['foto'] = $file->storeAs('alat', $filename, 'public');
         }
 
         $alat->update($data);
+        LogAktivitas::catat('Update', 'Alat', "Update alat: {$alat->nama_alat}");
 
         return redirect()->route('admin.alat.index')->with('success', 'Alat berhasil diupdate!');
     }
@@ -107,10 +108,12 @@ class AlatController extends Controller
     {
         // Hapus foto jika ada
         if ($alat->foto) {
-            Storage::delete('public/alat/' . $alat->foto);
+            Storage::disk('public')->delete($alat->foto);
         }
 
+        $namaAlat = $alat->nama_alat;
         $alat->delete();
+        LogAktivitas::catat('Delete', 'Alat', "Menghapus alat: {$namaAlat}");
         return redirect()->route('admin.alat.index')->with('success', 'Alat berhasil dihapus!');
     }
 }

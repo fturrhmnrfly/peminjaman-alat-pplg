@@ -7,6 +7,9 @@ use App\Http\Controllers\Admin\AlatController;
 use App\Http\Controllers\Admin\LogAktivitasController;
 use App\Http\Controllers\Petugas\VerifikasiPeminjamanController;
 use App\Http\Controllers\Peminjam\PeminjamanController;
+use App\Http\Controllers\Peminjam\AlatController as PeminjamAlatController;
+use App\Http\Controllers\Peminjam\PengembalianController as PeminjamPengembalianController;
+use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,11 +35,28 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->group(function (
     Route::get('/verifikasi', [VerifikasiPeminjamanController::class, 'index'])->name('verifikasi');
     Route::patch('/peminjaman/{peminjaman}/setujui', [VerifikasiPeminjamanController::class, 'setujui'])->name('peminjaman.setujui');
     Route::patch('/peminjaman/{peminjaman}/tolak', [VerifikasiPeminjamanController::class, 'tolak'])->name('peminjaman.tolak');
+    Route::get('/laporan', function () {
+        return view('petugas.laporan.index');
+    })->name('petugas.laporan');
+    Route::get('/pengembalian', function () {
+        $peminjaman = Peminjaman::with(['user', 'detailPeminjamans.alat'])
+            ->where('status', 'disetujui')
+            ->orderBy('tanggal_pinjam', 'desc')
+            ->get();
+
+        return view('petugas.pengembalian.index', [
+            'peminjaman' => $peminjaman,
+        ]);
+    })->name('petugas.pengembalian');
 });
 
 // Peminjam Routes
 Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->group(function () {
+    Route::get('alat', [PeminjamAlatController::class, 'index'])->name('peminjam.alat.index');
     Route::resource('peminjaman', PeminjamanController::class);
+    Route::get('pengembalian', [PeminjamPengembalianController::class, 'index'])->name('peminjam.pengembalian.index');
+    Route::patch('pengembalian/{peminjaman}', [PeminjamPengembalianController::class, 'update'])
+        ->name('peminjam.pengembalian.update');
 });
 
 Route::middleware('auth')->group(function () {

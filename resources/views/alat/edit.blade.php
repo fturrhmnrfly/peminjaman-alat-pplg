@@ -351,7 +351,20 @@
                         @if($alat->foto)
                         <div style="margin-top: 10px;">
                             <strong>Foto Saat Ini:</strong><br>
-                            <img src="{{ asset('storage/alat/' . $alat->foto) }}" alt="{{ $alat->nama_alat }}" class="current-foto">
+                            @php
+                                $fotoValue = $alat->foto;
+                                $fotoPath = \Illuminate\Support\Str::startsWith($fotoValue, ['alat/', 'public/alat/'])
+                                    ? $fotoValue
+                                    : 'alat/' . $fotoValue;
+                                $fotoPath = \Illuminate\Support\Str::startsWith($fotoPath, 'public/')
+                                    ? \Illuminate\Support\Str::after($fotoPath, 'public/')
+                                    : $fotoPath;
+                            @endphp
+                            @php
+                                /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
+                                $publicDisk = \Illuminate\Support\Facades\Storage::disk('public');
+                            @endphp
+                            <img src="{{ $publicDisk->url($fotoPath) }}" alt="{{ $alat->nama_alat }}" class="current-foto">
                         </div>
                         @endif
                     </div>

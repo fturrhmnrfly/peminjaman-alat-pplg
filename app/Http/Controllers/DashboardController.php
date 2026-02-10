@@ -33,7 +33,16 @@ class DashboardController extends Controller
         }
 
         if ($role === 'peminjam') {
-            return view('Dashboard.peminjam', ['user' => $user]);
+            $data = [
+                'user' => $user,
+                'totalAlat' => Alat::count(),
+                'pendingCount' => Peminjaman::where('user_id', $user->id)->where('status', 'pending')->count(),
+                'disetujuiCount' => Peminjaman::where('user_id', $user->id)->where('status', 'disetujui')->count(),
+                'ditolakCount' => Peminjaman::where('user_id', $user->id)->where('status', 'ditolak')->count(),
+                'dikembalikanCount' => Peminjaman::where('user_id', $user->id)->where('status', 'dikembalikan')->count(),
+            ];
+
+            return view('Dashboard.peminjam', $data);
         }
 
         abort(403, 'Role tidak dikenali');

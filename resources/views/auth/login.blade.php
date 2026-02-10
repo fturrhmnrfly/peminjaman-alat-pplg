@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistem Peminjaman Alat Pembelajaran</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -12,29 +14,37 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background:
+                radial-gradient(1200px 600px at 15% 10%, rgba(14, 116, 144, 0.18), transparent 60%),
+                radial-gradient(800px 500px at 85% 20%, rgba(249, 115, 22, 0.18), transparent 65%),
+                linear-gradient(135deg, #f8fafc 0%, #fff7ed 50%, #ecfeff 100%);
             padding: 20px;
+            color: #0f172a;
         }
 
         .login-container {
             display: flex;
             max-width: 1100px;
             width: 100%;
-            background: white;
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(10px);
         }
 
         .illustration-section {
             flex: 1;
-            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
-            padding: 60px 40px;
+            background:
+                radial-gradient(400px 250px at 20% 10%, rgba(255, 255, 255, 0.4), transparent 70%),
+                linear-gradient(135deg, #0f766e 0%, #115e59 60%, #134e4a 100%);
+            padding: 60px 50px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -45,11 +55,10 @@
         .illustration-section::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            inset: -20% -10% auto auto;
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
         }
 
         .illustration {
@@ -57,12 +66,35 @@
             max-width: 350px;
             position: relative;
             z-index: 1;
+            animation: floaty 6s ease-in-out infinite;
+        }
+
+        .brand-block {
+            position: absolute;
+            left: 40px;
+            bottom: 40px;
+            color: #e2e8f0;
+            z-index: 2;
+        }
+
+        .brand-title {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .brand-subtitle {
+            font-size: 14px;
+            opacity: 0.85;
+            max-width: 280px;
+            line-height: 1.5;
         }
 
         .form-section {
             flex: 1;
             padding: 60px 50px;
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            background: rgba(255, 255, 255, 0.75);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -71,14 +103,26 @@
         .form-wrapper {
             width: 100%;
             max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            padding: 36px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+            border: 1px solid rgba(148, 163, 184, 0.2);
         }
 
         h2 {
-            color: #1e293b;
-            font-size: 28px;
-            margin-bottom: 40px;
-            text-align: center;
-            font-weight: 600;
+            font-family: 'Fraunces', serif;
+            color: #0f172a;
+            font-size: 30px;
+            margin-bottom: 10px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #475569;
+            font-size: 14px;
+            margin-bottom: 28px;
         }
 
         .form-group {
@@ -94,8 +138,11 @@
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #64748b;
+            color: #0f766e;
             font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         input[type="text"],
@@ -103,20 +150,22 @@
         input[type="password"] {
             width: 100%;
             padding: 15px 15px 15px 45px;
-            border: none;
-            border-radius: 25px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            border-radius: 14px;
             font-size: 15px;
-            background: white;
+            background: #f8fafc;
             outline: none;
             transition: all 0.3s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
         }
 
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="password"]:focus {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-color: rgba(15, 118, 110, 0.6);
+            box-shadow: 0 8px 20px rgba(15, 118, 110, 0.2);
             transform: translateY(-2px);
+            background: #ffffff;
         }
 
         input::placeholder {
@@ -142,65 +191,23 @@
             color: #334155;
         }
 
-        .remember-forgot {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-
-        .remember-me input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: #1e293b;
-        }
-
-        .remember-me label {
-            font-size: 14px;
-            color: #1e293b;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .forgot-password {
-            font-size: 14px;
-            color: #1e293b;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .forgot-password:hover {
-            color: #0f172a;
-            text-decoration: underline;
-        }
-
         .login-button {
             width: 100%;
             padding: 15px;
-            background: #1e293b;
+            background: linear-gradient(135deg, #0f766e 0%, #0891b2 100%);
             color: white;
             border: none;
-            border-radius: 25px;
+            border-radius: 14px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
+            box-shadow: 0 10px 20px rgba(8, 145, 178, 0.25);
         }
 
         .login-button:hover {
-            background: #0f172a;
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(30, 41, 59, 0.4);
+            box-shadow: 0 14px 26px rgba(8, 145, 178, 0.35);
         }
 
         .login-button:active {
@@ -208,7 +215,7 @@
         }
 
         .login-button:disabled {
-            background: #64748b;
+            background: #94a3b8;
             cursor: not-allowed;
             transform: none;
         }
@@ -250,6 +257,20 @@
             height: 20px;
         }
 
+        .input-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        @keyframes floaty {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -272,67 +293,46 @@
             }
 
             .form-section {
-                padding: 40px 30px;
+                padding: 30px 20px 40px;
             }
 
             h2 {
-                font-size: 24px;
-                margin-bottom: 30px;
+                font-size: 26px;
             }
 
-            .remember-forgot {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
+            .brand-block {
+                position: static;
+                margin-top: 20px;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <!-- Illustration Section -->
         <div class="illustration-section">
             <div class="illustration">
                 <svg viewBox="0 0 320 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Shadow/Base -->
                     <ellipse cx="160" cy="250" rx="90" ry="15" fill="rgba(0,0,0,0.1)"/>
-                    
-                    <!-- Laptop Base/Stand -->
                     <path d="M 60 200 L 50 240 Q 50 245 55 245 L 265 245 Q 270 245 270 240 L 260 200 Z" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="1.5"/>
-                    
-                    <!-- Laptop Body Bottom -->
                     <rect x="60" y="200" width="200" height="8" rx="2" fill="rgba(200,200,200,0.3)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
-                    
-                    <!-- Screen Bezel -->
                     <rect x="50" y="50" width="220" height="150" rx="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                    
-                    <!-- Screen Glass -->
                     <rect x="58" y="58" width="204" height="134" rx="6" fill="rgba(255,255,255,0.95)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
-                    
-                    <!-- Screen Content - Header Bar -->
-                    <rect x="65" y="68" width="190" height="8" rx="2" fill="rgba(102, 126, 234, 0.3)"/>
-                    
-                    <!-- Screen Content - Text Lines -->
+                    <rect x="65" y="68" width="190" height="8" rx="2" fill="rgba(14, 116, 144, 0.25)"/>
                     <g opacity="0.6">
-                        <rect x="65" y="85" width="170" height="4" rx="2" fill="rgba(102, 126, 234, 0.2)"/>
-                        <rect x="65" y="95" width="180" height="4" rx="2" fill="rgba(102, 126, 234, 0.15)"/>
-                        <rect x="65" y="105" width="160" height="4" rx="2" fill="rgba(102, 126, 234, 0.15)"/>
-                        <rect x="65" y="115" width="175" height="4" rx="2" fill="rgba(102, 126, 234, 0.2)"/>
-                        <rect x="65" y="125" width="155" height="4" rx="2" fill="rgba(102, 126, 234, 0.15)"/>
-                        <rect x="65" y="135" width="165" height="4" rx="2" fill="rgba(102, 126, 234, 0.15)"/>
-                        <rect x="65" y="145" width="140" height="4" rx="2" fill="rgba(102, 126, 234, 0.1)"/>
-                        <rect x="65" y="155" width="150" height="4" rx="2" fill="rgba(102, 126, 234, 0.1)"/>
-                        <rect x="65" y="165" width="130" height="4" rx="2" fill="rgba(102, 126, 234, 0.1)"/>
+                        <rect x="65" y="85" width="170" height="4" rx="2" fill="rgba(14, 116, 144, 0.2)"/>
+                        <rect x="65" y="95" width="180" height="4" rx="2" fill="rgba(14, 116, 144, 0.15)"/>
+                        <rect x="65" y="105" width="160" height="4" rx="2" fill="rgba(14, 116, 144, 0.15)"/>
+                        <rect x="65" y="115" width="175" height="4" rx="2" fill="rgba(14, 116, 144, 0.2)"/>
+                        <rect x="65" y="125" width="155" height="4" rx="2" fill="rgba(14, 116, 144, 0.15)"/>
+                        <rect x="65" y="135" width="165" height="4" rx="2" fill="rgba(14, 116, 144, 0.15)"/>
+                        <rect x="65" y="145" width="140" height="4" rx="2" fill="rgba(14, 116, 144, 0.1)"/>
+                        <rect x="65" y="155" width="150" height="4" rx="2" fill="rgba(14, 116, 144, 0.1)"/>
+                        <rect x="65" y="165" width="130" height="4" rx="2" fill="rgba(14, 116, 144, 0.1)"/>
                     </g>
-                    
-                    <!-- Screen Reflection/Shine -->
                     <ellipse cx="100" cy="85" rx="30" ry="20" fill="rgba(255,255,255,0.3)"/>
                     <path d="M 220 75 Q 230 80 220 95" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
-                    
-                    <!-- Keyboard Area -->
                     <rect x="60" y="200" width="200" height="6" rx="2" fill="rgba(100,100,100,0.2)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-                    
-                    <!-- Keyboard Keys Pattern -->
                     <g opacity="0.4">
                         <rect x="68" y="204" width="3" height="2" rx="0.5" fill="rgba(255,255,255,0.6)"/>
                         <rect x="76" y="204" width="3" height="2" rx="0.5" fill="rgba(255,255,255,0.6)"/>
@@ -357,37 +357,30 @@
                         <rect x="228" y="204" width="3" height="2" rx="0.5" fill="rgba(255,255,255,0.6)"/>
                         <rect x="236" y="204" width="3" height="2" rx="0.5" fill="rgba(255,255,255,0.6)"/>
                     </g>
-                    
-                    <!-- Touchpad -->
                     <rect x="110" y="211" width="100" height="22" rx="3" fill="rgba(100,100,100,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                    
-                    <!-- Touchpad Border -->
                     <rect x="112" y="213" width="96" height="18" rx="2" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
-                    
-                    <!-- Decorative Elements - Floating Lights -->
                     <circle cx="280" cy="90" r="3" fill="rgba(255,255,255,0.4)"/>
                     <circle cx="40" cy="130" r="2" fill="rgba(255,255,255,0.3)"/>
                     <circle cx="290" cy="160" r="2.5" fill="rgba(255,255,255,0.35)"/>
-                    
-                    <!-- Power Indicator -->
                     <circle cx="270" cy="65" r="2.5" fill="#22c55e" opacity="0.8"/>
                     <circle cx="270" cy="65" r="1.5" fill="#86efac"/>
-                    
-                    <!-- Glow under screen -->
                     <ellipse cx="160" cy="195" rx="100" ry="20" fill="rgba(255,255,255,0.05)"/>
                 </svg>
             </div>
+            <div class="brand-block">
+                <div class="brand-title">Peminjaman Alat PPLG</div>
+                <div class="brand-subtitle">Kelola peminjaman alat pembelajaran dengan alur yang rapi dan cepat.</div>
+            </div>
         </div>
 
-        <!-- Form Section -->
         <div class="form-section">
             <div class="form-wrapper">
                 <h2>Masuk Untuk Lanjut</h2>
-                
+                <div class="subtitle">Silakan login menggunakan akun yang terdaftar.</div>
+
                 <div id="errorMessage" class="error-message"></div>
                 <div id="successMessage" class="success-message"></div>
 
-                <!-- Tampilkan error dari Laravel -->
                 @if ($errors->any())
                     <div class="error-message show">
                         @foreach ($errors->all() as $error)
@@ -395,18 +388,23 @@
                         @endforeach
                     </div>
                 @endif
-                
+
                 <form method="POST" action="{{ route('login') }}" id="loginForm">
                     @csrf
 
                     <div class="form-group">
                         <div class="input-wrapper">
-                            <span class="input-icon">👤</span>
-                            <input 
-                                type="text" 
-                                id="username" 
-                                name="username" 
-                                placeholder="Username" 
+                            <span class="input-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </span>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                placeholder="Username"
                                 value="{{ old('username') }}"
                                 required
                                 autocomplete="username"
@@ -419,12 +417,17 @@
 
                     <div class="form-group">
                         <div class="input-wrapper">
-                            <span class="input-icon">🔒</span>
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                placeholder="Password" 
+                            <span class="input-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="10" rx="2"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 11V7a5 5 0 0110 0v4"/>
+                                </svg>
+                            </span>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Password"
                                 required
                                 autocomplete="current-password"
                             >
@@ -440,15 +443,7 @@
                         @enderror
                     </div>
 
-                    <div class="remember-forgot">
-                        <div class="remember-me">
-                            <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                            <label for="remember">Ingat saya</label>
-                        </div>
-                    </div>
-
                     <button type="submit" class="login-button">Login</button>
-
                 </form>
             </div>
         </div>
@@ -458,7 +453,7 @@
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');
-            
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 eyeIcon.innerHTML = `

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Peminjaman</title>
+    <title>Ajukan Peminjaman</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -24,10 +24,9 @@
             min-height: 100vh;
         }
 
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: 260px;
-            background: linear-gradient(180deg, #1e3a8a, #1e40af);
+            background: linear-gradient(180deg, #0f766e, #0d9488);
             color: white;
             padding: 25px 20px;
             display: flex;
@@ -59,8 +58,8 @@
 
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            background: rgba(250, 204, 21, 0.15);
-            color: #fde68a;
+            background: rgba(16, 185, 129, 0.2);
+            color: #d1fae5;
         }
 
         .sidebar-footer {
@@ -69,7 +68,6 @@
             opacity: 0.8;
         }
 
-        /* ===== MAIN CONTENT ===== */
         .main {
             flex: 1;
             padding: 30px;
@@ -96,8 +94,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #facc15, #fde68a);
-            color: #1e3a8a;
+            background: linear-gradient(135deg, #34d399, #a7f3d0);
+            color: #065f46;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -111,16 +109,15 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
-        .header-action {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .header-action h2 {
+        .section-title {
             font-size: 22px;
             color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .section-desc {
+            color: #6b7280;
+            margin-bottom: 20px;
         }
 
         .alert {
@@ -141,31 +138,87 @@
             border-left: 4px solid #ef4444;
         }
 
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .item-rows {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .item-row {
+            display: grid;
+            grid-template-columns: 1fr 120px 40px;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .item-row button {
+            border: none;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 6px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #0f766e;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #111827;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         table thead {
             background: #f9fafb;
         }
 
-        table th {
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            color: #374151;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
+        table th,
         table td {
             padding: 12px;
             border-bottom: 1px solid #f3f4f6;
+            text-align: left;
             vertical-align: top;
-        }
-
-        table tbody tr:hover {
-            background: #f9fafb;
         }
 
         .badge {
@@ -176,7 +229,7 @@
             display: inline-block;
         }
 
-        .badge-menunggu {
+        .badge-pending {
             background: #e0e7ff;
             color: #3730a3;
         }
@@ -191,7 +244,7 @@
             color: #991b1b;
         }
 
-        .badge-selesai {
+        .badge-dikembalikan {
             background: #fef3c7;
             color: #92400e;
         }
@@ -222,13 +275,6 @@
             white-space: nowrap;
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 20px;
-        }
-
         .logout-btn {
             background: #ef4444;
             color: white;
@@ -248,20 +294,15 @@
 </head>
 
 <body>
-
     <div class="layout">
-
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-brand">📚 Peminjaman Alat</div>
 
             <nav class="sidebar-menu">
                 <a href="{{ route('dashboard') }}">🏠 Dashboard</a>
-                <a href="{{ route('admin.user.index') }}">👥 User</a>
-                <a href="{{ route('admin.kategori.index') }}">📂 Kategori</a>
-                <a href="{{ route('admin.alat.index') }}">🛠️ Alat</a>
-                <a href="{{ route('admin.log.index') }}">📋 Log Aktivitas</a>
-                <a href="{{ route('admin.peminjaman.index') }}"class="active">📦 Data Peminjaman</a>
+                <a href="{{ route('peminjam.alat.index') }}">🧰 Daftar Alat</a>
+                <a href="{{ route('peminjaman.index') }}" class="active">📝 Ajukan Peminjaman</a>
+                <a href="{{ route('peminjam.pengembalian.index') }}">📦 Pengembalian</a>
             </nav>
 
             <form method="POST" action="{{ route('logout') }}" style="margin-top: auto;">
@@ -274,12 +315,9 @@
             </div>
         </aside>
 
-        <!-- MAIN -->
         <main class="main">
-
-            <!-- TOPBAR -->
             <div class="topbar">
-                <strong>Data Peminjaman</strong>
+                <strong>Ajukan Peminjaman</strong>
                 <div class="user-info">
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
@@ -288,57 +326,89 @@
                 </div>
             </div>
 
-            <!-- CONTENT -->
             <div class="content-card">
+                <h2 class="section-title">Form Pengajuan</h2>
+                <p class="section-desc">Pilih alat yang ingin dipinjam dan tentukan jumlahnya.</p>
 
-                <!-- Alert Messages -->
                 @if(session('success'))
                 <div class="alert alert-success">
                     {{ session('success') }}
                 </div>
                 @endif
 
-                @if(session('error'))
+                @if($errors->any())
                 <div class="alert alert-error">
-                    {{ session('error') }}
+                    {{ $errors->first() }}
                 </div>
                 @endif
 
-                <div class="header-action">
-                    <h2>Daftar Peminjaman</h2>
-                </div>
+                <form method="POST" action="{{ route('peminjaman.store') }}">
+                    @csrf
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="tanggal_pinjam">Tanggal Pinjam</label>
+                            <input type="date" id="tanggal_pinjam" name="tanggal_pinjam" value="{{ old('tanggal_pinjam') }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Detail Alat</label>
+                        <div class="item-rows" id="item-rows">
+                            <div class="item-row" data-index="0">
+                                <select name="items[0][alat_id]" required>
+                                    <option value="">Pilih Alat</option>
+                                    @foreach($alat as $item)
+                                    @php
+                                        $isAvailable = ($item->kondisi === 'baik') && ($item->jumlah > 0);
+                                        $label = $item->nama_alat . ' (' . $item->jumlah . ')';
+                                        if ($item->jumlah <= 0) {
+                                            $label .= ' - stok habis';
+                                        } elseif (! $isAvailable) {
+                                            $label .= ' - tidak bisa dipinjam';
+                                        }
+                                    @endphp
+                                    <option value="{{ $item->id }}" @if(! $isAvailable) disabled @endif>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                <input type="number" name="items[0][jumlah_pinjam]" min="1" placeholder="Jumlah" required>
+                                <button type="button" class="remove-row" style="display:none;">✕</button>
+                            </div>
+                        </div>
+                        <button type="button" id="add-row" class="btn-secondary">Tambah Alat</button>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <button type="submit" class="btn-primary">Kirim Pengajuan</button>
+                    </div>
+                </form>
+
+                <hr style="margin: 25px 0; border: none; border-top: 1px solid #e5e7eb;">
+
+                <h2 class="section-title">Riwayat Pengajuan</h2>
+                <p class="section-desc">Daftar pengajuan yang pernah Anda buat.</p>
 
                 <table>
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Peminjam</th>
                             <th>Tanggal</th>
                             <th>Status</th>
                             <th>Detail Alat</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($peminjaman as $index => $row)
+                        @forelse($peminjaman as $row)
                         <tr>
-                            <td>{{ $peminjaman->firstItem() + $index }}</td>
-                            <td>
-                                <strong>{{ $row->user->nama ?? '-' }}</strong>
-                                <div style="color: #6b7280; font-size: 12px;">
-                                    {{ $row->user->email ?? '-' }}
-                                </div>
-                            </td>
                             <td>
                                 <div>Pinjam: {{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</div>
                                 <div>Kembali: {{ optional($row->tanggal_kembali)->format('d/m/Y') ?? '-' }}</div>
                             </td>
                             <td>
                                 @php
-                                    $status = strtolower($row->status ?? 'menunggu');
-                                    $badgeClass = 'badge-menunggu';
+                                    $status = strtolower($row->status ?? 'pending');
+                                    $badgeClass = 'badge-pending';
                                     if ($status === 'disetujui') $badgeClass = 'badge-disetujui';
                                     elseif ($status === 'ditolak') $badgeClass = 'badge-ditolak';
-                                    elseif ($status === 'selesai' || $status === 'dikembalikan') $badgeClass = 'badge-selesai';
+                                    elseif ($status === 'dikembalikan') $badgeClass = 'badge-dikembalikan';
                                 @endphp
                                 <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
                             </td>
@@ -357,24 +427,44 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 30px; color: #9ca3af;">
-                                Belum ada data peminjaman
+                            <td colspan="3" style="text-align: center; padding: 30px; color: #9ca3af;">
+                                Belum ada pengajuan peminjaman
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
-
-                <!-- Pagination -->
-                <div class="pagination">
-                    {{ $peminjaman->links() }}
-                </div>
-
             </div>
-
         </main>
     </div>
 
+    <script>
+        const itemRows = document.getElementById('item-rows');
+        const addRowBtn = document.getElementById('add-row');
+
+        addRowBtn.addEventListener('click', () => {
+            const lastRow = itemRows.querySelector('.item-row:last-child');
+            const nextIndex = Number(lastRow.dataset.index) + 1;
+            const newRow = lastRow.cloneNode(true);
+
+            newRow.dataset.index = nextIndex;
+            newRow.querySelectorAll('select, input').forEach((field) => {
+                if (field.tagName === 'SELECT') {
+                    field.name = `items[${nextIndex}][alat_id]`;
+                    field.value = '';
+                } else {
+                    field.name = `items[${nextIndex}][jumlah_pinjam]`;
+                    field.value = '';
+                }
+            });
+
+            const removeBtn = newRow.querySelector('.remove-row');
+            removeBtn.style.display = 'inline-block';
+            removeBtn.addEventListener('click', () => newRow.remove());
+
+            itemRows.appendChild(newRow);
+        });
+    </script>
 </body>
 
 </html>

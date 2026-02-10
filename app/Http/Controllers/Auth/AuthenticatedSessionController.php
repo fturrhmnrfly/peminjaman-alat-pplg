@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\LogAktivitas;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,10 +30,10 @@ class AuthenticatedSessionController extends Controller
         ]);
 
         if (Auth::attempt(
-            ['username' => $request->username, 'password' => $request->password],
-            $request->boolean('remember')
+            ['username' => $request->username, 'password' => $request->password]
         )) {
             $request->session()->regenerate();
+            LogAktivitas::catat('Login', 'Auth', 'User berhasil login');
 
             // Redirect ke dashboard (yang akan menampilkan view sesuai role)
             return redirect()->intended(route('dashboard'));
@@ -48,6 +49,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = $request->user();
+        if ($user) {
+            LogAktivitas::catat('Logout', 'Auth', "User {$user->nama} logout");
+        }
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
