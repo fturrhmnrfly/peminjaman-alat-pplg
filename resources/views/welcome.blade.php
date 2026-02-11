@@ -213,10 +213,10 @@
         .hero h1 {
             font-size: 56px;
             font-weight: 800;
-            line-height: 1.2;
+            line-height: 1.3;
             margin-bottom: 20px;
             color: #111827;
-            animation: slideUp 0.8s ease-out 0.2s backwards;
+            animation: slideUp 0.8s ease-out;
         }
 
         .hero h1 .highlight {
@@ -224,6 +224,23 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-size: 1.4em;
+            font-weight: 900;
+            letter-spacing: -1px;
+            display: inline-block;
+            text-shadow: 0 4px 20px rgba(15, 118, 110, 0.2);
+            animation: slideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s backwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .hero p {
@@ -301,233 +318,182 @@
             line-height: 1.8;
         }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
-            padding: 40px;
-            border-radius: 15px;
-            border: 1px solid #e5e7eb;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-            border-color: #14b8a6;
-        }
-
-        .feature-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-            display: inline-block;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .feature-card h3 {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #111827;
-        }
-
-        .feature-card p {
-            color: #6b7280;
-            line-height: 1.7;
-            font-size: 15px;
-        }
-
-        /* ===== BENEFITS SECTION ===== */
-        .benefits {
-            padding: 100px 40px;
-            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
-        }
-
-        .benefits-container {
-            max-width: 1280px;
-            margin: 0 auto;
+        .features-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
+            gap: 40px;
+            max-width: 1280px;
+            margin: 0 auto 80px;
         }
 
-        .benefits-content h2 {
-            font-size: 42px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            color: #111827;
-        }
-
-        .benefits-content p {
-            font-size: 16px;
-            color: #6b7280;
-            line-height: 1.8;
-            margin-bottom: 30px;
-        }
-
-        .benefits-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .benefit-item {
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-        }
-
-        .benefit-check {
-            background: linear-gradient(135deg, #0f766e, #14b8a6);
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
+        .feature-banner {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid #e5e7eb;
             display: flex;
             align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 18px;
+            gap: 30px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
         }
 
-        .benefit-item h4 {
-            font-size: 16px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 5px;
+        .feature-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.05) 0%, rgba(15, 118, 110, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            z-index: 0;
         }
 
-        .benefit-item p {
-            font-size: 14px;
-            color: #6b7280;
-            margin: 0;
+        .feature-banner:hover {
+            transform: translateY(-8px);
+            border-color: #14b8a6;
+            box-shadow: 0 20px 50px rgba(20, 184, 166, 0.15);
         }
 
-        .benefits-image {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 100px;
-            opacity: 0.9;
+        .feature-banner:hover::before {
+            opacity: 1;
         }
 
-        /* ===== CTA SECTION ===== */
-        .cta-section {
-            padding: 80px 40px;
-            background: linear-gradient(135deg, #0f766e, #14b8a6);
+        .feature-banner-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-banner-icon {
+            font-size: 80px;
+            min-width: 100px;
             text-align: center;
-            color: white;
+            opacity: 0.8;
+            transition: all 0.4s;
         }
 
-        .cta-content {
-            max-width: 800px;
-            margin: 0 auto;
+        .feature-banner:hover .feature-banner-icon {
+            transform: scale(1.15) rotate(5deg);
+            opacity: 1;
         }
 
-        .cta-content h2 {
+        .feature-number {
             font-size: 48px;
             font-weight: 800;
-            margin-bottom: 15px;
+            background: linear-gradient(135deg, #14b8a6, #0f766e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
         }
 
-        .cta-content p {
-            font-size: 18px;
-            margin-bottom: 40px;
-            opacity: 0.95;
-            line-height: 1.8;
+        .feature-banner h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 12px;
+            line-height: 1.3;
         }
 
-        .cta-buttons {
+        .feature-banner p {
+            font-size: 15px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .feature-highlights {
             display: flex;
-            gap: 20px;
-            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .cta-buttons .btn {
-            font-size: 16px;
-            padding: 12px 30px;
-        }
-
-        .btn-light {
-            background: white;
-            color: #0f766e;
-        }
-
-        .btn-light:hover {
-            background: #f0fdf4;
-            transform: translateY(-2px);
-        }
-
-        /* ===== FOOTER ===== */
-        footer {
-            background: #1f2937;
-            color: #d1d5db;
-            padding: 40px;
-            text-align: center;
+        .highlight {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             font-size: 14px;
+            color: #065f46;
+            font-weight: 600;
+            padding: 8px 12px;
+            background: #d1fae5;
+            border-radius: 8px;
+            width: fit-content;
         }
 
-        footer a {
-            color: #14b8a6;
-            text-decoration: none;
-            transition: color 0.3s;
+        .feature-banner-alt {
+            flex-direction: row-reverse;
         }
 
-        footer a:hover {
+        /* ===== COMPARISON TABLE ===== */
+        .comparison-section {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding-top: 60px;
+        }
+
+        .comparison-section h3 {
+            font-size: 32px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #111827;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .comparison-table thead {
+            background: linear-gradient(135deg, #0f766e, #14b8a6);
             color: white;
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .navbar-container {
-                padding: 0 20px;
-            }
+        .comparison-table th {
+            padding: 20px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
 
-            .hero h1 {
-                font-size: 36px;
-            }
+        .comparison-table th.highlight-col {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            font-size: 17px;
+        }
 
-            .hero p {
-                font-size: 16px;
-            }
+        .comparison-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 15px;
+            color: #374151;
+        }
 
-            .hero-buttons {
-                flex-direction: column;
-            }
+        .comparison-table tbody tr:hover {
+            background: #f9fafb;
+        }
 
-            .benefits-container {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
+        .comparison-table tbody tr:last-child td {
+            border-bottom: none;
+        }
 
-            .section-header h2 {
-                font-size: 32px;
-            }
+        .comparison-table td.check {
+            color: #065f46;
+            font-weight: 700;
+            background: rgba(209, 250, 229, 0.4);
+        }
 
-            .cta-content h2 {
-                font-size: 36px;
-            }
-
-            .navbar-links {
-                gap: 15px;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-            }
+        .comparison-table tbody tr:hover td.check {
+            background: rgba(209, 250, 229, 0.6);
         }
     </style>
 </head>
@@ -606,105 +572,150 @@
             <p>Semua yang Anda butuhkan untuk mengelola peminjaman alat dengan efisien</p>
         </div>
 
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Dashboard Admin</h3>
-                <p>Kelola data user, alat, kategori, dan monitoring semua aktivitas dalam satu tempat</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">✅</div>
-                <h3>Verifikasi Otomatis</h3>
-                <p>Proses persetujuan peminjaman yang cepat dengan sistem notifikasi real-time</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">📈</div>
-                <h3>Laporan & Analitik</h3>
-                <p>Buat laporan peminjaman dan unduh dalam format CSV untuk analisis lebih lanjut</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🛡️</div>
-                <h3>Keamanan Terjamin</h3>
-                <p>Akses terkontrol dengan sistem role berbasis (Admin, Petugas, Peminjam)</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">⏱️</div>
-                <h3>Tracking Otomatis</h3>
-                <p>Pantau status peminjaman, pengembalian, dan deteksi keterlambatan secara real-time</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3>Responsif & Mobile</h3>
-                <p>Akses dari mana saja, kapan saja menggunakan desktop, tablet, atau smartphone</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- BENEFITS SECTION -->
-    <section class="benefits" id="benefits">
-        <div class="benefits-container">
-            <div class="benefits-content">
-                <h2>Mengapa Pilih Kami?</h2>
-                <p>Kami menawarkan solusi lengkap untuk manajemen peminjaman alat yang lebih efisien, transparan, dan terukur.</p>
-
-                <div class="benefits-list">
-                    <div class="benefit-item">
-                        <div class="benefit-check">✓</div>
-                        <div>
-                            <h4>Proses Lebih Singkat</h4>
-                            <p>Pengajuan peminjaman hanya membutuhkan waktu 1 menit</p>
-                        </div>
+        <div class="features-container">
+            <!-- FEATURE 1 -->
+            <div class="feature-banner">
+                <div class="feature-banner-content">
+                    <div class="feature-number">01</div>
+                    <h3>Dashboard Admin Lengkap</h3>
+                    <p>Kelola data user, alat, kategori, dan monitoring semua aktivitas dalam satu tempat yang intuitif dan mudah digunakan</p>
+                    <div class="feature-highlights">
+                        <span class="highlight">✓ Manajemen User</span>
+                        <span class="highlight">✓ Kelola Alat</span>
+                        <span class="highlight">✓ Log Aktivitas</span>
                     </div>
+                </div>
+                <div class="feature-banner-icon">📊</div>
+            </div>
 
-                    <div class="benefit-item">
-                        <div class="benefit-check">✓</div>
-                        <div>
-                            <h4>Riwayat Tercatat</h4>
-                            <p>Semua aktivitas tersimpan otomatis untuk dokumentasi dan evaluasi</p>
-                        </div>
-                    </div>
-
-                    <div class="benefit-item">
-                        <div class="benefit-check">✓</div>
-                        <div>
-                            <h4>Status Real-time</h4>
-                            <p>Peminjam dapat memantau status pengajuan mereka kapan saja</p>
-                        </div>
-                    </div>
-
-                    <div class="benefit-item">
-                        <div class="benefit-check">✓</div>
-                        <div>
-                            <h4>Akses Terkontrol</h4>
-                            <p>Setiap user hanya dapat mengakses data sesuai dengan role mereka</p>
-                        </div>
-                    </div>
-
-                    <div class="benefit-item">
-                        <div class="benefit-check">✓</div>
-                        <div>
-                            <h4>Laporan Komprehensif</h4>
-                            <p>Generate laporan untuk evaluasi dan pengambilan keputusan</p>
-                        </div>
+            <!-- FEATURE 2 -->
+            <div class="feature-banner feature-banner-alt">
+                <div class="feature-banner-icon">✅</div>
+                <div class="feature-banner-content">
+                    <div class="feature-number">02</div>
+                    <h3>Verifikasi Otomatis</h3>
+                    <p>Proses persetujuan peminjaman yang cepat dengan sistem notifikasi real-time dan tampilan data yang terstruktur</p>
+                    <div class="feature-highlights">
+                        <span class="highlight">✓ Notifikasi Real-time</span>
+                        <span class="highlight">✓ Verifikasi Cepat</span>
+                        <span class="highlight">✓ Tracking Otomatis</span>
                     </div>
                 </div>
             </div>
 
-            <div class="benefits-image">
-                🎯
+            <!-- FEATURE 3 -->
+            <div class="feature-banner">
+                <div class="feature-banner-content">
+                    <div class="feature-number">03</div>
+                    <h3>Laporan & Analitik Komprehensif</h3>
+                    <p>Generate laporan peminjaman lengkap dengan filter tanggal, status, dan pengguna untuk evaluasi dan pengambilan keputusan</p>
+                    <div class="feature-highlights">
+                        <span class="highlight">✓ Filter Laporan</span>
+                        <span class="highlight">✓ Export CSV</span>
+                        <span class="highlight">✓ Grafik Analisis</span>
+                    </div>
+                </div>
+                <div class="feature-banner-icon">📈</div>
+            </div>
+
+            <!-- FEATURE 4 -->
+            <div class="feature-banner feature-banner-alt">
+                <div class="feature-banner-icon">🛡️</div>
+                <div class="feature-banner-content">
+                    <div class="feature-number">04</div>
+                    <h3>Keamanan Terjamin</h3>
+                    <p>Akses terkontrol dengan sistem role berbasis (Admin, Petugas, Peminjam) dan enkripsi data untuk keamanan maksimal</p>
+                    <div class="feature-highlights">
+                        <span class="highlight">✓ Role-based Access</span>
+                        <span class="highlight">✓ Enkripsi Password</span>
+                        <span class="highlight">✓ Audit Trail</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEATURE 5 -->
+            <div class="feature-banner">
+                <div class="feature-banner-content">
+                    <div class="feature-number">05</div>
+                    <h3>Tracking Pengembalian</h3>
+                    <p>Pantau status peminjaman, pengembalian, dan deteksi keterlambatan secara real-time dengan sistem notifikasi otomatis</p>
+                    <div class="feature-highlights">
+                        <span class="highlight">✓ Monitoring Aktif</span>
+                        <span class="highlight">✓ Alert Keterlambatan</span>
+                        <span class="highlight">✓ Status Real-time</span>
+                    </div>
+                </div>
+                <div class="feature-banner-icon">⏱️</div>
+            </div>
+
+            <!-- FEATURE 6 -->
+            <div class="feature-banner feature-banner-alt">
+                <div class="feature-banner-icon">⚡</div>
+                <div class="feature-banner-content">
+                    <div class="feature-number">06</div>
+                    <h3>Performa Tinggi & Cepat</h3>
+                    <p>Interface yang responsif dengan loading cepat, proses peminjaman yang singkat, dan sistem yang stabil 24/7</p>
+                    <div class="feature-highlights">
+                        <span class="highlight">✓ Loading Cepat</span>
+                        <span class="highlight">✓ 99% Uptime</span>
+                        <span class="highlight">✓ Optimized Database</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>&copy; {{ date('Y') }} <strong>{{ config('app.name', 'Peminjaman PPLG') }}</strong> - Sistem Manajemen Peminjaman Alat Pembelajaran</p>
-        <p style="margin-top: 10px;">Dibuat dengan ❤️ untuk sekolah yang lebih baik</p>
-    </footer>
+        <!-- COMPARISON TABLE -->
+        <div class="comparison-section">
+            <h3>Mengapa Kami Berbeda?</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Fitur</th>
+                        <th class="highlight-col">Peminjaman PPLG</th>
+                        <th>Sistem Manual</th>
+                        <th>Aplikasi Lainnya</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Proses Peminjaman</td>
+                        <td class="check">✓ 1 Menit</td>
+                        <td>30+ Menit</td>
+                        <td>5-10 Menit</td>
+                    </tr>
+                    <tr>
+                        <td>Riwayat Otomatis</td>
+                        <td class="check">✓ Tersimpan Otomatis</td>
+                        <td>Manual</td>
+                        <td>Terbatas</td>
+                    </tr>
+                    <tr>
+                        <td>Notifikasi Real-time</td>
+                        <td class="check">✓ Ada</td>
+                        <td>Tidak Ada</td>
+                        <td>Terbatas</td>
+                    </tr>
+                    <tr>
+                        <td>Laporan Terukur</td>
+                        <td class="check">✓ Komprehensif</td>
+                        <td>Sulit</td>
+                        <td>Sederhana</td>
+                    </tr>
+                    <tr>
+                        <td>Keamanan Data</td>
+                        <td class="check">✓ Tinggi</td>
+                        <td>Rendah</td>
+                        <td>Sedang</td>
+                    </tr>
+                    <tr>
+                        <td>Support 24/7</td>
+                        <td class="check">✓ Tersedia</td>
+                        <td>Tidak Ada</td>
+                        <td>Terbatas</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </body>
 </html>

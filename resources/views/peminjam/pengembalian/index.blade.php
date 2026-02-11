@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengembalian Alat</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/peminjam-sidebar.css', 'resources/js/app.js'])
 
     <style>
         * {
@@ -22,50 +22,6 @@
         .layout {
             display: flex;
             min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 260px;
-            background: linear-gradient(180deg, #0f766e, #0d9488);
-            color: white;
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-brand {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 40px;
-        }
-
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .sidebar-menu a {
-            text-decoration: none;
-            color: #e5e7eb;
-            padding: 12px 15px;
-            border-radius: 10px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            background: rgba(16, 185, 129, 0.2);
-            color: #d1fae5;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            font-size: 13px;
-            opacity: 0.8;
         }
 
         .main {
@@ -211,25 +167,7 @@
 
 <body>
     <div class="layout">
-        <aside class="sidebar">
-            <div class="sidebar-brand">📚 Peminjaman Alat</div>
-
-            <nav class="sidebar-menu">
-                <a href="{{ route('dashboard') }}">🏠 Dashboard</a>
-                <a href="{{ route('peminjam.alat.index') }}">🧰 Daftar Alat</a>
-                <a href="{{ route('peminjaman.index') }}">📝 Ajukan Peminjaman</a>
-                <a href="{{ route('peminjam.pengembalian.index') }}" class="active">📦 Pengembalian</a>
-            </nav>
-
-            <form method="POST" action="{{ route('logout') }}" style="margin-top: auto;">
-                @csrf
-                <button type="submit" class="logout-btn">🚪 Logout</button>
-            </form>
-
-            <div class="sidebar-footer">
-                © {{ date('Y') }} Sistem Sekolah
-            </div>
-        </aside>
+        <x-peminjam-sidebar></x-peminjam-sidebar>
 
         <main class="main">
             <div class="topbar">

@@ -208,6 +208,38 @@
                 font-size: 60px;
             }
         }
+
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-wrapper input {
+            width: 100%;
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px 8px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-password:hover {
+            transform: scale(1.1);
+        }
+
+        .toggle-password:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
@@ -283,13 +315,18 @@
 
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            placeholder="Minimal 8 karakter"
-                            required
-                        >
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Minimal 8 karakter"
+                                required
+                            >
+                            <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                👁️
+                            </button>
+                        </div>
                         @error('password')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
@@ -297,13 +334,18 @@
 
                     <div class="form-group">
                         <label for="password_confirmation">Konfirmasi Password</label>
-                        <input 
-                            type="password" 
-                            id="password_confirmation" 
-                            name="password_confirmation" 
-                            placeholder="Ulangi password"
-                            required
-                        >
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password_confirmation" 
+                                name="password_confirmation" 
+                                placeholder="Ulangi password"
+                                required
+                            >
+                            <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation')">
+                                👁️
+                            </button>
+                        </div>
                     </div>
 
                     <button type="submit" class="register-button">Daftar Sekarang</button>
@@ -315,5 +357,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const button = event.target.closest('.toggle-password');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                field.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+    </script>
 </body>
 </html>

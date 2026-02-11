@@ -178,6 +178,38 @@
             gap: 12px;
         }
 
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-wrapper input {
+            width: 100%;
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px 8px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-password:hover {
+            transform: scale(1.1);
+        }
+
+        .toggle-password:active {
+            transform: scale(0.95);
+        }
+
         @media (max-width: 768px) {
             .login-container {
                 flex-direction: column;
@@ -248,13 +280,18 @@
 
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            placeholder="Masukkan password Anda"
-                            required
-                        >
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Masukkan password Anda"
+                                required
+                            >
+                            <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                👁️
+                            </button>
+                        </div>
                     </div>
 
                     <button type="submit" class="login-button">Login Sekarang</button>
@@ -266,5 +303,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const button = event.target.closest('.toggle-password');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                field.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+    </script>
 </body>
 </html>
