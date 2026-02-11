@@ -31,7 +31,7 @@ class PeminjamanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'tanggal_pinjam' => ['required', 'date'],
+            'tanggal_pinjam' => ['required', 'date', 'after_or_equal:today'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.alat_id' => [
                 'required',

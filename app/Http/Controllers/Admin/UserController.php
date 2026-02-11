@@ -13,7 +13,7 @@ class UserController extends Controller
     // Menampilkan daftar user
     public function index()
     {
-        $users = User::orderBy('created_at', 'desc')->paginate(10);
+        $users = User::orderBy('id', 'asc')->paginate(10);
         return view('user.index', compact('users'));
     }
 

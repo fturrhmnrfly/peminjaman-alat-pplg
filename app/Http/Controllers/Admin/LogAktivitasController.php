@@ -86,7 +86,7 @@ class LogAktivitasController extends Controller
 
         $logs = $query->get();
 
-        $filename = 'log_aktivitas_' . date('Y-m-d_His') . '.csv';
+        $filename = 'log_aktivitas_' . now()->timezone('Asia/Jakarta')->format('Y-m-d_His') . '.csv';
         
         $headers = [
             'Content-Type' => 'text/csv',
@@ -102,7 +102,7 @@ class LogAktivitasController extends Controller
             // Data
             foreach ($logs as $log) {
                 fputcsv($file, [
-                    $log->created_at->format('Y-m-d H:i:s'),
+                    $log->created_at->timezone('Asia/Jakarta')->format('Y-m-d H:i:s') . ' WIB',
                     $log->nama_user,
                     $log->aksi,
                     $log->modul,

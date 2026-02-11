@@ -14,7 +14,7 @@ class AlatController extends Controller
     // Menampilkan daftar alat
     public function index()
     {
-        $alats = Alat::with('kategori')->orderBy('created_at', 'desc')->paginate(10);
+        $alats = Alat::with('kategori')->orderBy('id', 'asc')->paginate(10);
         return view('alat.index', compact('alats'));
     }
 

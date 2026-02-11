@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LogAktivitas;
 use App\Models\Peminjaman;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PengembalianController extends Controller
 {
@@ -28,20 +29,37 @@ class PengembalianController extends Controller
             abort(403, 'Tidak diizinkan.');
         }
 
-        if ($peminjaman->status !== 'disetujui') {
-            return back()->with('error', 'Peminjaman ini belum dapat dikembalikan.');
+        $result = DB::transaction(function () use ($peminjaman) {
+            $peminjaman = Peminjaman::query()
+                ->with(['detailPeminjamans.alat'])
+                ->lockForUpdate()
+                ->findOrFail($peminjaman->id);
+
+            if ($peminjaman->status !== 'disetujui') {
+                return ['ok' => false, 'message' => 'Peminjaman ini belum dapat dikembalikan.'];
+            }
+
+            foreach ($peminjaman->detailPeminjamans as $detail) {
+                $detail->alat()->increment('jumlah', $detail->jumlah_pinjam);
+            }
+
+            $peminjaman->update([
+                'status' => 'dikembalikan',
+                'tanggal_kembali' => now()->toDateString(),
+            ]);
+
+            LogAktivitas::catat(
+                'Update',
+                'Peminjaman',
+                "Pengembalian diajukan untuk peminjaman #{$peminjaman->id}"
+            );
+
+            return ['ok' => true];
+        });
+
+        if (! $result['ok']) {
+            return back()->with('error', $result['message']);
         }
-
-        $peminjaman->update([
-            'status' => 'dikembalikan',
-            'tanggal_kembali' => now()->toDateString(),
-        ]);
-
-        LogAktivitas::catat(
-            'Update',
-            'Peminjaman',
-            "Pengembalian diajukan untuk peminjaman #{$peminjaman->id}"
-        );
 
         return back()->with('success', 'Pengembalian berhasil diajukan.');
     }

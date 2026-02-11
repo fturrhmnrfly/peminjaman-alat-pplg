@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log Aktivitas - Admin</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/admin-sidebar.css', 'resources/js/app.js'])
 
     <style>
+        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -19,72 +20,34 @@
             background: #f5f7fb;
         }
 
+        /* ===== LAYOUT ===== */
         .layout {
             display: flex;
             min-height: 100vh;
-        }
-
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            width: 260px;
-            background: linear-gradient(180deg, #1e3a8a, #1e40af);
-            color: white;
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-brand {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 40px;
-        }
-
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .sidebar-menu a {
-            text-decoration: none;
-            color: #e5e7eb;
-            padding: 12px 15px;
-            border-radius: 10px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            background: rgba(250, 204, 21, 0.15);
-            color: #fde68a;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            font-size: 13px;
-            opacity: 0.8;
         }
 
         /* ===== MAIN CONTENT ===== */
         .main {
             flex: 1;
             padding: 30px;
+            overflow-y: auto;
         }
 
         /* ===== TOPBAR ===== */
         .topbar {
             background: white;
             padding: 18px 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
+        }
+
+        .topbar strong {
+            font-size: 18px;
+            color: #1f2937;
         }
 
         .user-info {
@@ -99,12 +62,20 @@
             border-radius: 50%;
             background: linear-gradient(135deg, #facc15, #fde68a);
             color: #1e3a8a;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 16px;
         }
 
+        .user-info span {
+            font-size: 14px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        /* ===== LOGOUT BUTTON ===== */
         .logout-btn {
             background: #ef4444;
             color: white;
@@ -113,68 +84,98 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            transition: 0.3s;
+            font-weight: 500;
+            transition: all 0.3s ease;
             width: 100%;
         }
 
         .logout-btn:hover {
             background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
-        /* ===== CONTENT ===== */
+        /* ===== CONTENT HEADER ===== */
         .content-header {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .content-header h1 {
-            font-size: 26px;
+            font-size: 28px;
             color: #1f2937;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-weight: 700;
         }
 
         .content-header p {
             color: #6b7280;
+            font-size: 15px;
+        }
+
+        /* ===== ALERT ===== */
+        .alert {
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
         }
 
         /* ===== FILTER SECTION ===== */
         .filter-section {
             background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
         }
 
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 16px;
+            margin-bottom: 18px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
         }
 
         .form-group label {
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
+            font-weight: 600;
             color: #374151;
         }
 
         .form-control {
             padding: 10px 12px;
-            border: 1px solid #d1d5db;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
             font-size: 14px;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            background: #fafbfc;
         }
 
         .form-control:focus {
             outline: none;
             border-color: #3b82f6;
+            background: white;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
@@ -184,16 +185,19 @@
             flex-wrap: wrap;
         }
 
+        /* ===== BUTTONS ===== */
         .btn {
-            padding: 10px 20px;
+            padding: 10px 18px;
             border: none;
             border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .btn-primary {
@@ -203,6 +207,8 @@
 
         .btn-primary:hover {
             background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .btn-secondary {
@@ -212,6 +218,7 @@
 
         .btn-secondary:hover {
             background: #4b5563;
+            transform: translateY(-2px);
         }
 
         .btn-success {
@@ -221,22 +228,15 @@
 
         .btn-success:hover {
             background: #059669;
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         /* ===== TABLE ===== */
         .table-container {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             overflow: hidden;
         }
 
@@ -255,15 +255,16 @@
         }
 
         th {
-            padding: 15px;
+            padding: 16px;
             text-align: left;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
+            letter-spacing: 0.5px;
         }
 
         td {
-            padding: 15px;
-            border-bottom: 1px solid #e5e7eb;
+            padding: 14px 16px;
+            border-bottom: 1px solid #f3f4f6;
             font-size: 14px;
         }
 
@@ -273,11 +274,12 @@
 
         /* ===== BADGE ===== */
         .badge {
-            padding: 5px 12px;
-            border-radius: 20px;
+            padding: 5px 11px;
+            border-radius: 6px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             display: inline-block;
+            text-transform: capitalize;
         }
 
         .badge-login {
@@ -309,80 +311,81 @@
             background: #e0e7ff;
             color: #3730a3;
         }
-
-        /* ===== PAGINATION ===== */
-        .pagination-wrapper {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pagination {
-            display: flex;
-            gap: 5px;
-            list-style: none;
-        }
-
-        .pagination a,
-        .pagination span {
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            text-decoration: none;
-            color: #374151;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-
-        .pagination a:hover {
-            background: #f3f4f6;
-        }
-
-        .pagination .active span {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
-
-        .pagination .disabled span {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* ===== ALERT ===== */
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border-left: 4px solid #10b981;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border-left: 4px solid #ef4444;
-        }
-
+        
         /* ===== EMPTY STATE ===== */
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: #6b7280;
+            padding: 60px 24px;
         }
 
         .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 15px;
-            opacity: 0.5;
+            font-size: 56px;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+
+            .main {
+                padding: 20px;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .pagination-wrapper {
+                flex-direction: column;
+                gap: 12px;
+                justify-content: center;
+                text-align: center;
+                padding: 10px 24px;
+            }
+
+            .pagination {
+                justify-content: center;
+            }
+
+            .pagination a,
+            .pagination span {
+                padding: 5px 7px;
+                font-size: 11px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
         }
     </style>
 </head>
@@ -390,31 +393,10 @@
 <body>
 
     <div class="layout">
-
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">📚 Peminjaman Alat</div>
-
-            <nav class="sidebar-menu">
-                <a href="{{ route('dashboard') }}">🏠 Dashboard</a>
-                <a href="{{ route('admin.user.index') }}">👥 User</a>
-                <a href="{{ route('admin.kategori.index') }}">📂 Kategori</a>
-                <a href="{{ route('admin.alat.index') }}">🛠️ Alat</a>
-                <a href="{{ route('admin.log.index') }}" class="active">📋 Log Aktivitas</a>
-                <a href="{{ route('admin.peminjaman.index') }}">📦 Data Peminjaman</a>
-            </nav>
-
-            <form method="POST" action="{{ route('logout') }}" style="margin-top: auto;">
-                @csrf
-                <button type="submit" class="logout-btn">🚪 Logout</button>
-            </form>
-
-            <div class="sidebar-footer">
-                © {{ date('Y') }} Sistem Sekolah
-            </div>
-        </aside>
-
-        <!-- MAIN -->
+        <!-- SIDEBAR - DARI COMPONENT -->
+        <x-admin-sidebar />
+        
+        <!-- MAIN CONTENT -->
         <main class="main">
 
             <!-- TOPBAR -->
@@ -519,11 +501,11 @@
                             @foreach($logs as $index => $log)
                             <tr>
                                 <td>{{ $logs->firstItem() + $index }}</td>
-                                <td>{{ $log->created_at->format('d/m/Y H:i') }}</td>
+                                <td>{{ $log->created_at->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
                                 <td>
                                     <strong>{{ $log->nama_user }}</strong>
                                     @if($log->user)
-                                    <br><small style="color: #6b7280;">{{ $log->user->email ?? '-' }}</small>
+                                    <br><small style="color: #6b7280; font-size: 12px;">{{ $log->user->email ?? '-' }}</small>
                                     @endif
                                 </td>
                                 <td>
@@ -554,17 +536,6 @@
                     </div>
                     @endif
                 </div>
-
-                @if($logs->count() > 0)
-                <div class="pagination-wrapper">
-                    <div>
-                        Menampilkan {{ $logs->firstItem() }} - {{ $logs->lastItem() }} dari {{ $logs->total() }} log
-                    </div>
-                    <div>
-                        {{ $logs->links() }}
-                    </div>
-                </div>
-                @endif
             </div>
 
         </main>

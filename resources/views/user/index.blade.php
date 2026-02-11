@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola User</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/admin-sidebar.css', 'resources/js/app.js'])
 
     <style>
         * {
@@ -22,51 +22,6 @@
         .layout {
             display: flex;
             min-height: 100vh;
-        }
-
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            width: 260px;
-            background: linear-gradient(180deg, #1e3a8a, #1e40af);
-            color: white;
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-brand {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 40px;
-        }
-
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .sidebar-menu a {
-            text-decoration: none;
-            color: #e5e7eb;
-            padding: 12px 15px;
-            border-radius: 10px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            background: rgba(250, 204, 21, 0.15);
-            color: #fde68a;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            font-size: 13px;
-            opacity: 0.8;
         }
 
         /* ===== MAIN CONTENT ===== */
@@ -265,29 +220,10 @@
 <body>
 
     <div class="layout">
+        <!-- SIDEBAR - DARI COMPONENT -->
+        <x-admin-sidebar />
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">📚 Peminjaman Alat</div>
-
-            <nav class="sidebar-menu">
-                <a href="{{ route('dashboard') }}">🏠 Dashboard</a>
-                <a href="{{ route('admin.user.index') }}" class="active">👥 User</a>
-                <a href="{{ route('admin.kategori.index') }}">📂 Kategori</a>
-                <a href="{{ route('admin.alat.index') }}">🛠️ Alat</a>
-                <a href="{{ route('admin.log.index') }}">📋 Log Aktivitas</a>
-                <a href="{{ route('admin.peminjaman.index') }}">📦 Data Peminjaman</a>
-            </nav>
-            <form method="POST" action="{{ route('logout') }}" style="margin-top: auto;">
-                @csrf
-                <button type="submit" class="logout-btn">🚪 Logout</button>
-            </form>
-            <div class="sidebar-footer">
-                © {{ date('Y') }} Sistem Sekolah
-            </div>
-        </aside>
-
-        <!-- MAIN -->
+        <!-- MAIN CONTENT -->
         <main class="main">
 
             <!-- TOPBAR -->

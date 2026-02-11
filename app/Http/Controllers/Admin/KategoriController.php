@@ -11,7 +11,7 @@ class KategoriController extends Controller
     // Menampilkan daftar kategori
     public function index()
     {
-        $kategoris = Kategori::orderBy('created_at', 'desc')->paginate(10);
+        $kategoris = Kategori::orderBy('id', 'asc')->paginate(10);
         return view('kategori.index', compact('kategoris'));
     }
 
