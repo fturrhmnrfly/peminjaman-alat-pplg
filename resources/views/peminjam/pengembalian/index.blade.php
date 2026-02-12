@@ -173,6 +173,7 @@
             <div class="topbar">
                 <strong>Pengembalian Alat</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
                     </div>
@@ -183,6 +184,10 @@
             <div class="content-card">
                 <h2 class="section-title">Daftar Alat Yang Sedang Dipinjam</h2>
                 <p class="section-desc">Ajukan pengembalian untuk peminjaman yang sudah disetujui.</p>
+                <div class="alert alert-error" style="margin-bottom: 15px;">
+                    <strong>Peringatan:</strong> Alat harus dikembalikan paling lambat pukul 15:00 WIB ke ruang PPLG.
+                    Terlambat dikenakan denda Rp 2.000. Jika terjadi kerusakan atau kehilangan, peminjam wajib bertanggung jawab kepada pihak sekolah.
+                </div>
 
                 @if(session('success'))
                 <div class="alert alert-success">
@@ -212,8 +217,8 @@
                                 <div class="item-list">
                                     @forelse($row->detailPeminjamans as $detail)
                                     <div class="item">
-                                        <span class="item-name">{{ $detail->alat->nama_alat ?? '-' }}</span>
-                                        <span class="item-qty">x{{ $detail->jumlah_pinjam }}</span>
+                                        <span class="item-name">{{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}</span>
+                                        <span class="item-qty">{{ $detail->alatUnit?->kode_unik ?? '-' }}</span>
                                     </div>
                                     @empty
                                     <div style="color: #9ca3af;">Tidak ada detail alat</div>

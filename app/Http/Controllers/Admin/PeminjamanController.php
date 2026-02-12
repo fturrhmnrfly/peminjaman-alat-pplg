@@ -10,7 +10,7 @@ class PeminjamanController extends Controller
 {
     public function index()
     {
-        $peminjaman = Peminjaman::with(['user', 'detailPeminjamans.alat'])
+        $peminjaman = Peminjaman::with(['user', 'detailPeminjamans.alatUnit.alat', 'detailPeminjamans.alat'])
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 

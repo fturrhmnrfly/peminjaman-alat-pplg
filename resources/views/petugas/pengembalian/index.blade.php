@@ -111,6 +111,16 @@
             color: #065f46;
         }
 
+        .btn-primary {
+            background: #0f766e;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         .logout-btn {
             background: #ef4444;
             color: white;
@@ -139,6 +149,7 @@
             <div class="topbar">
                 <strong>Memantau Pengembalian</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
                     </div>
@@ -147,8 +158,8 @@
             </div>
 
             <div class="content-card">
-                <h2 class="section-title">Peminjaman Aktif</h2>
-                <p class="section-desc">Pantau keterlambatan dan update status pengembalian.</p>
+                <h2 class="section-title">Konfirmasi Pengembalian</h2>
+                <p class="section-desc">Periksa alat yang dikembalikan dan konfirmasi jika sudah benar.</p>
 
                 <table class="table">
                     <thead>
@@ -156,7 +167,9 @@
                             <th>Peminjam</th>
                             <th>Alat</th>
                             <th>Tanggal Pinjam</th>
+                            <th>Batas Kembali</th>
                             <th>Status</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -170,17 +183,47 @@
                             </td>
                             <td>
                                 @forelse($row->detailPeminjamans as $detail)
-                                <div>{{ $detail->alat->nama_alat ?? '-' }} (x{{ $detail->jumlah_pinjam }})</div>
+                                <div>
+                                    {{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}
+                                    ({{ $detail->alatUnit?->kode_unik ?? '-' }})
+                                </div>
                                 @empty
                                 <div style="color: #9ca3af;">Tidak ada detail alat</div>
                                 @endforelse
                             </td>
-                            <td>{{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</td>
-                            <td><span class="badge badge-ok">Disetujui</span></td>
+                            <td>
+                                <div>{{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</div>
+                                <div style="color: #6b7280; font-size: 12px;">
+                                    {{ optional($row->waktu_pinjam)->format('H:i') ?? '-' }} WIB
+                                </div>
+                            </td>
+                            <td>
+                                <div>{{ optional($row->batas_kembali)->format('d/m/Y') ?? '-' }}</div>
+                                <div style="color: #6b7280; font-size: 12px;">
+                                    {{ optional($row->batas_kembali)->format('H:i') ?? '-' }} WIB
+                                </div>
+                            </td>
+                            <td>
+                                @php
+                                    $isLate = optional($row->batas_kembali)->lt(\Carbon\Carbon::now('Asia/Jakarta'));
+                                @endphp
+                                @if($isLate)
+                                    <span class="badge badge-late">Terlambat</span>
+                                @else
+                                    <span class="badge badge-ok">Menunggu Konfirmasi</span>
+                                @endif
+                            </td>
+                            <td>
+                                <form method="POST" action="{{ route('petugas.pengembalian.konfirmasi', $row->id) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn-primary">Konfirmasi</button>
+                                </form>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" style="text-align: center; padding: 30px; color: #9ca3af;">
+                            <td colspan="6" style="text-align: center; padding: 30px; color: #9ca3af;">
                                 Tidak ada data pengembalian
                             </td>
                         </tr>

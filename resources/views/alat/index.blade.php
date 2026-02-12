@@ -238,6 +238,7 @@
             <div class="topbar">
                 <strong>Kelola Alat</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
                     </div>
@@ -273,8 +274,9 @@
                             <th>Foto</th>
                             <th>Nama Alat</th>
                             <th>Kategori</th>
-                            <th>Jumlah</th>
+                            <th>Jumlah (Tersedia/Total)</th>
                             <th>Kondisi</th>
+                            <th>Kode Unik</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -286,7 +288,10 @@
                                     @if ($alat->foto)
                                         @php
                                             $fotoValue = $alat->foto;
-                                            $fotoPath = \Illuminate\Support\Str::startsWith($fotoValue, ['alat/', 'public/alat/'])
+                                            $fotoPath = \Illuminate\Support\Str::startsWith($fotoValue, [
+                                                'alat/',
+                                                'public/alat/',
+                                            ])
                                                 ? $fotoValue
                                                 : 'alat/' . $fotoValue;
                                             $fotoPath = \Illuminate\Support\Str::startsWith($fotoPath, 'public/')
@@ -302,7 +307,7 @@
                                     @else
                                         <div
                                             style="width: 50px; height: 50px; background: #e5e7eb; border-radius: 8px;
-                    display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                                            display: flex; align-items: center; justify-content: center; font-size: 20px;">
                                             🛠️
                                         </div>
                                     @endif
@@ -310,11 +315,36 @@
 
                                 <td><strong>{{ $alat->nama_alat }}</strong></td>
                                 <td>{{ $alat->kategori->nama_kategori ?? '-' }}</td>
-                                <td>{{ $alat->jumlah }}</td>
+                                <td>
+                                    @php
+                                        $totalUnit = $alat->units->count();
+                                        $availableUnits = $alat->units
+                                            ->where('status', 'tersedia');
+                                        $availableCount = $availableUnits->count();
+                                    @endphp
+                                    @if ($totalUnit > 0)
+                                        {{ $availableCount }} / {{ $totalUnit }}
+                                    @else
+                                        {{ $alat->jumlah }}
+                                    @endif
+                                </td>
                                 <td>
                                     <span class="badge badge-{{ $alat->kondisi }}">
                                         {{ ucfirst($alat->kondisi) }}
                                     </span>
+                                </td>
+                                <td>
+                                    @php
+                                        $kodeList = $alat->units->pluck('kode_unik')->values();
+                                        $kodePreview = $kodeList->take(5)->implode(', ');
+                                    @endphp
+                                    @if ($kodeList->isEmpty())
+                                        -
+                                    @else
+                                        {{ $kodePreview }}@if ($kodeList->count() > 5)
+                                            +{{ $kodeList->count() - 5 }}
+                                        @endif
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="action-buttons">
@@ -329,26 +359,26 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" style="text-align: center; padding: 30px; color: #9ca3af;">
-                                    Belum ada data alat
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            @empty
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 30px; color: #9ca3af;">
+                                        Belum ada data alat
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
 
-                <!-- Pagination -->
-                <div class="pagination">
-                    {{ $alats->links() }}
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        {{ $alats->links() }}
+                    </div>
+
                 </div>
 
-            </div>
+            </main>
+        </div>
 
-        </main>
-    </div>
+    </body>
 
-</body>
-
-</html>
+    </html>

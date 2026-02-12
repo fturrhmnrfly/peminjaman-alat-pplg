@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Peminjam;
 
 use App\Http\Controllers\Controller;
 use App\Models\LogAktivitas;
+use App\Models\Notification;
 use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ class PengembalianController extends Controller
 {
     public function index()
     {
-        $peminjaman = Peminjaman::with('detailPeminjamans.alat')
+        $peminjaman = Peminjaman::with(['detailPeminjamans.alatUnit.alat', 'detailPeminjamans.alat'])
             ->where('user_id', auth()->id())
             ->where('status', 'disetujui')
             ->orderBy('tanggal_pinjam', 'desc')
@@ -31,27 +32,41 @@ class PengembalianController extends Controller
 
         $result = DB::transaction(function () use ($peminjaman) {
             $peminjaman = Peminjaman::query()
-                ->with(['detailPeminjamans.alat'])
+                ->with(['detailPeminjamans.alatUnit.alat', 'detailPeminjamans.alat'])
                 ->lockForUpdate()
                 ->findOrFail($peminjaman->id);
 
             if ($peminjaman->status !== 'disetujui') {
+                if ($peminjaman->status === 'pengembalian_pending') {
+                    return ['ok' => false, 'message' => 'Pengembalian sudah diajukan dan menunggu konfirmasi petugas.'];
+                }
                 return ['ok' => false, 'message' => 'Peminjaman ini belum dapat dikembalikan.'];
             }
 
-            foreach ($peminjaman->detailPeminjamans as $detail) {
-                $detail->alat()->increment('jumlah', $detail->jumlah_pinjam);
-            }
-
             $peminjaman->update([
-                'status' => 'dikembalikan',
-                'tanggal_kembali' => now()->toDateString(),
+                'status' => 'pengembalian_pending',
             ]);
 
             LogAktivitas::catat(
                 'Update',
                 'Peminjaman',
                 "Pengembalian diajukan untuk peminjaman #{$peminjaman->id}"
+            );
+
+            Notification::pushForUser(
+                $peminjaman->user_id,
+                'Pengembalian Diajukan',
+                "Pengembalian untuk peminjaman #{$peminjaman->id} menunggu konfirmasi petugas."
+            );
+            Notification::pushForRole(
+                'petugas',
+                'Konfirmasi Pengembalian',
+                "Pengembalian untuk peminjaman #{$peminjaman->id} menunggu konfirmasi."
+            );
+            Notification::pushForRole(
+                'admin',
+                'Pengembalian Diajukan',
+                "Pengembalian untuk peminjaman #{$peminjaman->id} telah diajukan."
             );
 
             return ['ok' => true];
@@ -61,6 +76,6 @@ class PengembalianController extends Controller
             return back()->with('error', $result['message']);
         }
 
-        return back()->with('success', 'Pengembalian berhasil diajukan.');
+        return back()->with('success', 'Pengembalian diajukan dan menunggu konfirmasi petugas.');
     }
 }

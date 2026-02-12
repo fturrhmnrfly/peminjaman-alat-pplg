@@ -209,6 +209,7 @@
             <div class="topbar">
                 <strong>Kelola Kategori</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
                     </div>

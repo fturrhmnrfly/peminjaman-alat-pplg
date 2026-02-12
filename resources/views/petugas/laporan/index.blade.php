@@ -46,6 +46,7 @@
             <div class="topbar">
                 <strong>Laporan Peminjaman</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">{{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}</div>
                     <span>{{ auth()->user()->nama }}</span>
                 </div>
@@ -72,6 +73,7 @@
                                 <option value="pending" @selected($filters['status'] === 'pending')>Pending</option>
                                 <option value="disetujui" @selected($filters['status'] === 'disetujui')>Disetujui</option>
                                 <option value="ditolak" @selected($filters['status'] === 'ditolak')>Ditolak</option>
+                                <option value="pengembalian_pending" @selected($filters['status'] === 'pengembalian_pending')>Menunggu Konfirmasi</option>
                                 <option value="dikembalikan" @selected($filters['status'] === 'dikembalikan')>Dikembalikan</option>
                             </select>
                         </div>
@@ -112,17 +114,25 @@
                                 </td>
                                 <td>
                                     @php
-                                        $status = strtolower($row->status ?? 'pending');
-                                        $badgeClass = 'badge-pending';
-                                        if ($status === 'disetujui') $badgeClass = 'badge-disetujui';
-                                        elseif ($status === 'ditolak') $badgeClass = 'badge-ditolak';
-                                        elseif ($status === 'dikembalikan') $badgeClass = 'badge-dikembalikan';
-                                    @endphp
-                                    <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
+                                    $status = strtolower($row->status ?? 'pending');
+                                    $badgeClass = 'badge-pending';
+                                    if ($status === 'disetujui') $badgeClass = 'badge-disetujui';
+                                    elseif ($status === 'ditolak') $badgeClass = 'badge-ditolak';
+                                    elseif ($status === 'pengembalian_pending') $badgeClass = 'badge-pending';
+                                    elseif ($status === 'dikembalikan') $badgeClass = 'badge-dikembalikan';
+                                @endphp
+                                @php
+                                    $statusLabel = $status;
+                                    if ($status === 'pengembalian_pending') $statusLabel = 'Menunggu Konfirmasi';
+                                @endphp
+                                <span class="badge {{ $badgeClass }}">{{ ucfirst($statusLabel) }}</span>
                                 </td>
                                 <td>
                                     @forelse($row->detailPeminjamans as $detail)
-                                        <div>{{ $detail->alat->nama_alat ?? '-' }} (x{{ $detail->jumlah_pinjam }})</div>
+                                        <div>
+                                            {{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}
+                                            ({{ $detail->alatUnit?->kode_unik ?? '-' }})
+                                        </div>
                                     @empty
                                         <div style="color:#9ca3af;">Tidak ada detail alat</div>
                                     @endforelse

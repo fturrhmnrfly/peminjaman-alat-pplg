@@ -182,6 +182,7 @@
             <div class="topbar">
                 <strong>Dashboard Peminjam</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
                     </div>
@@ -200,7 +201,7 @@
                 <a href="{{ route('peminjam.alat.index') }}" class="card">
                     <div class="card-icon">🧰</div>
                     <h3>Daftar Alat</h3>
-                    <p>Lihat alat yang tersedia dan kondisinya</p>
+                    <p>Lihat alat yang tersedia</p>
                 </a>
 
                 <a href="{{ route('peminjaman.index') }}" class="card">

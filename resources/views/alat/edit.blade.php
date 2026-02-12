@@ -204,6 +204,7 @@
             <div class="topbar">
                 <strong>Edit Alat</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
                     </div>
@@ -251,6 +252,27 @@
                         <input type="number" name="jumlah" class="form-control @error('jumlah') error @enderror" 
                                value="{{ old('jumlah', $alat->jumlah) }}" placeholder="Contoh: 10" min="0" required>
                         @error('jumlah')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        <div class="info-message">Jika ada kode unik, jumlah akan mengikuti total unit.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Daftar Kode Unik (Unit Saat Ini)</label>
+                        @php
+                            $existingCodes = $alat->units->pluck('kode_unik')->values();
+                        @endphp
+                        <textarea class="form-control" rows="4" readonly>@if($existingCodes->isNotEmpty()){{ $existingCodes->implode("\n") }}@else{{ '-' }}@endif</textarea>
+                        <div class="info-message">Kode unik yang sudah ada tidak dapat diubah dari halaman ini.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tambah Kode Unik Baru (1 baris = 1 unit)</label>
+                        <textarea name="kode_unik_tambah" class="form-control @error('kode_unik_tambah') error @enderror"
+                                  placeholder="Contoh:
+ASUS-011
+ASUS-012">{{ old('kode_unik_tambah') }}</textarea>
+                        @error('kode_unik_tambah')
                         <div class="error-message">{{ $message }}</div>
                         @enderror
                     </div>

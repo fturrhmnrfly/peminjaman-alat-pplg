@@ -187,6 +187,7 @@
             <div class="topbar">
                 <strong>Daftar Alat</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
                     </div>
@@ -196,7 +197,7 @@
 
             <div class="content-card">
                 <h2 class="section-title">Alat Tersedia</h2>
-                <p class="section-desc">Lihat alat yang bisa dipinjam beserta kondisi dan jumlahnya.</p>
+                <p class="section-desc">Lihat alat yang bisa dipinjam beserta jumlahnya.</p>
 
                 <form method="GET" action="{{ route('peminjam.alat.index') }}" style="margin-bottom: 20px;">
                     <div class="form-grid">
@@ -211,15 +212,6 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="kondisi">Kondisi</label>
-                            <select id="kondisi" name="kondisi">
-                                <option value="">Semua Kondisi</option>
-                                <option value="baik" @if($selectedKondisi === 'baik') selected @endif>Kondisi Baik</option>
-                                <option value="rusak" @if($selectedKondisi === 'rusak') selected @endif>Rusak</option>
-                                <option value="hilang" @if($selectedKondisi === 'hilang') selected @endif>Hilang</option>
-                            </select>
-                        </div>
                     </div>
                     <button type="submit" class="btn-primary">Terapkan Filter</button>
                     <a href="{{ route('peminjam.alat.index') }}" class="btn-secondary" style="text-decoration: none;">Reset</a>
@@ -230,8 +222,8 @@
                         <tr>
                             <th>Nama Alat</th>
                             <th>Kategori</th>
-                            <th>Jumlah</th>
-                            <th>Kondisi</th>
+                            <th>Jumlah (Tersedia/Total)</th>
+                            <th>Kode Unik (Tersedia)</th>
                             <th>Keterangan</th>
                         </tr>
                     </thead>
@@ -240,15 +232,28 @@
                         <tr>
                             <td>{{ $item->nama_alat }}</td>
                             <td>{{ $item->kategori->nama_kategori ?? '-' }}</td>
-                            <td>{{ $item->jumlah }}</td>
                             <td>
                                 @php
-                                    $kondisi = strtolower($item->kondisi ?? 'baik');
-                                    $badgeClass = 'badge-baik';
-                                    if ($kondisi === 'rusak') $badgeClass = 'badge-rusak';
-                                    elseif ($kondisi === 'hilang') $badgeClass = 'badge-hilang';
+                                    $totalUnit = $item->units->count();
+                                    $availableUnits = $item->units->where('status', 'tersedia');
+                                    $availableCount = $availableUnits->count();
                                 @endphp
-                                <span class="badge {{ $badgeClass }}">{{ ucfirst($kondisi) }}</span>
+                                @if($totalUnit > 0)
+                                    {{ $availableCount }} / {{ $totalUnit }}
+                                @else
+                                    {{ $item->jumlah }}
+                                @endif
+                            </td>
+                            <td>
+                                @php
+                                    $kodeList = $availableUnits->pluck('kode_unik')->values();
+                                    $kodePreview = $kodeList->take(5)->implode(', ');
+                                @endphp
+                                @if($kodeList->isEmpty())
+                                    -
+                                @else
+                                    {{ $kodePreview }}@if($kodeList->count() > 5) +{{ $kodeList->count() - 5 }}@endif
+                                @endif
                             </td>
                             <td>{{ $item->keterangan ?? '-' }}</td>
                         </tr>

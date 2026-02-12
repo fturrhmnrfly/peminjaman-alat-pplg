@@ -125,7 +125,7 @@
 
         .item-row {
             display: grid;
-            grid-template-columns: 1fr 120px 40px;
+            grid-template-columns: 1fr 40px;
             gap: 10px;
             align-items: center;
         }
@@ -257,6 +257,7 @@
             <div class="topbar">
                 <strong>Ajukan Peminjaman</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
                     </div>
@@ -266,7 +267,12 @@
 
             <div class="content-card">
                 <h2 class="section-title">Form Pengajuan</h2>
-                <p class="section-desc">Pilih alat yang ingin dipinjam dan tentukan jumlahnya.</p>
+                <p class="section-desc">Pilih kode unik unit yang ingin dipinjam. Peminjaman dibuka pukul 07:00 - 15:00 WIB.</p>
+
+                <div class="alert alert-error" style="margin-bottom: 15px;">
+                    <strong>Peringatan:</strong> Alat harus dikembalikan paling lambat pukul 15:00 WIB ke ruang PPLG.
+                    Terlambat dikenakan denda Rp 2.000. Jika terjadi kerusakan atau kehilangan, peminjam wajib bertanggung jawab kepada pihak sekolah.
+                </div>
 
                 @if(session('success'))
                 <div class="alert alert-success">
@@ -282,37 +288,25 @@
 
                 <form method="POST" action="{{ route('peminjaman.store') }}">
                     @csrf
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="tanggal_pinjam">Tanggal Pinjam</label>
-                            <input type="date" id="tanggal_pinjam" name="tanggal_pinjam" value="{{ old('tanggal_pinjam') }}" required>
-                        </div>
-                    </div>
-
                     <div class="form-group">
                         <label>Detail Alat</label>
                         <div class="item-rows" id="item-rows">
                             <div class="item-row" data-index="0">
-                                <select name="items[0][alat_id]" required>
-                                    <option value="">Pilih Alat</option>
-                                    @foreach($alat as $item)
+                                <select name="items[0][alat_unit_id]" required>
+                                    <option value="">Pilih Kode Unik</option>
+                                    @forelse($alatUnits as $unit)
                                     @php
-                                        $isAvailable = ($item->kondisi === 'baik') && ($item->jumlah > 0);
-                                        $label = $item->nama_alat . ' (' . $item->jumlah . ')';
-                                        if ($item->jumlah <= 0) {
-                                            $label .= ' - stok habis';
-                                        } elseif (! $isAvailable) {
-                                            $label .= ' - tidak bisa dipinjam';
-                                        }
+                                        $label = ($unit->alat->nama_alat ?? '-') . ' - ' . $unit->kode_unik;
                                     @endphp
-                                    <option value="{{ $item->id }}" @if(! $isAvailable) disabled @endif>{{ $label }}</option>
-                                    @endforeach
+                                    <option value="{{ $unit->id }}">{{ $label }}</option>
+                                    @empty
+                                    <option value="" disabled>Tidak ada kode tersedia</option>
+                                    @endforelse
                                 </select>
-                                <input type="number" name="items[0][jumlah_pinjam]" min="1" placeholder="Jumlah" required>
                                 <button type="button" class="remove-row" style="display:none;">✕</button>
                             </div>
                         </div>
-                        <button type="button" id="add-row" class="btn-secondary">Tambah Alat</button>
+                        <button type="button" id="add-row" class="btn-secondary">Tambah Kode</button>
                     </div>
 
                     <div style="margin-top: 15px;">
@@ -338,6 +332,10 @@
                         <tr>
                             <td>
                                 <div>Pinjam: {{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</div>
+                                <div style="color: #6b7280; font-size: 12px;">
+                                    Jam: {{ optional($row->waktu_pinjam)->format('H:i') ?? '-' }} WIB
+                                </div>
+                                <div>Batas: {{ optional($row->batas_kembali)->format('d/m/Y H:i') ?? '-' }} WIB</div>
                                 <div>Kembali: {{ optional($row->tanggal_kembali)->format('d/m/Y') ?? '-' }}</div>
                             </td>
                             <td>
@@ -346,16 +344,21 @@
                                     $badgeClass = 'badge-pending';
                                     if ($status === 'disetujui') $badgeClass = 'badge-disetujui';
                                     elseif ($status === 'ditolak') $badgeClass = 'badge-ditolak';
+                                    elseif ($status === 'pengembalian_pending') $badgeClass = 'badge-pending';
                                     elseif ($status === 'dikembalikan') $badgeClass = 'badge-dikembalikan';
                                 @endphp
-                                <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
+                                @php
+                                    $statusLabel = $status;
+                                    if ($status === 'pengembalian_pending') $statusLabel = 'Menunggu Konfirmasi';
+                                @endphp
+                                <span class="badge {{ $badgeClass }}">{{ ucfirst($statusLabel) }}</span>
                             </td>
                             <td>
                                 <div class="item-list">
                                     @forelse($row->detailPeminjamans as $detail)
                                     <div class="item">
-                                        <span class="item-name">{{ $detail->alat->nama_alat ?? '-' }}</span>
-                                        <span class="item-qty">x{{ $detail->jumlah_pinjam }}</span>
+                                        <span class="item-name">{{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}</span>
+                                        <span class="item-qty">{{ $detail->alatUnit?->kode_unik ?? '-' }}</span>
                                     </div>
                                     @empty
                                     <div style="color: #9ca3af;">Tidak ada detail alat</div>
@@ -386,14 +389,9 @@
             const newRow = lastRow.cloneNode(true);
 
             newRow.dataset.index = nextIndex;
-            newRow.querySelectorAll('select, input').forEach((field) => {
-                if (field.tagName === 'SELECT') {
-                    field.name = `items[${nextIndex}][alat_id]`;
-                    field.value = '';
-                } else {
-                    field.name = `items[${nextIndex}][jumlah_pinjam]`;
-                    field.value = '';
-                }
+            newRow.querySelectorAll('select').forEach((field) => {
+                field.name = `items[${nextIndex}][alat_unit_id]`;
+                field.value = '';
             });
 
             const removeBtn = newRow.querySelector('.remove-row');

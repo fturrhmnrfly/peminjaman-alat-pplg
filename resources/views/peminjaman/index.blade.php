@@ -216,6 +216,7 @@
             <div class="topbar">
                 <strong>Data Peminjaman</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
                     </div>
@@ -273,16 +274,21 @@
                                     $badgeClass = 'badge-menunggu';
                                     if ($status === 'disetujui') $badgeClass = 'badge-disetujui';
                                     elseif ($status === 'ditolak') $badgeClass = 'badge-ditolak';
+                                    elseif ($status === 'pengembalian_pending') $badgeClass = 'badge-menunggu';
                                     elseif ($status === 'selesai' || $status === 'dikembalikan') $badgeClass = 'badge-selesai';
                                 @endphp
-                                <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
+                                @php
+                                    $statusLabel = $status;
+                                    if ($status === 'pengembalian_pending') $statusLabel = 'Menunggu Konfirmasi';
+                                @endphp
+                                <span class="badge {{ $badgeClass }}">{{ ucfirst($statusLabel) }}</span>
                             </td>
                             <td>
                                 <div class="item-list">
                                     @forelse($row->detailPeminjamans as $detail)
                                     <div class="item">
-                                        <span class="item-name">{{ $detail->alat->nama_alat ?? '-' }}</span>
-                                        <span class="item-qty">x{{ $detail->jumlah_pinjam }}</span>
+                                        <span class="item-name">{{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}</span>
+                                        <span class="item-qty">{{ $detail->alatUnit?->kode_unik ?? '-' }}</span>
                                     </div>
                                     @empty
                                     <div style="color: #9ca3af;">Tidak ada detail alat</div>

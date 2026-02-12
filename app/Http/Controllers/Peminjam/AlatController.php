@@ -19,14 +19,12 @@ class AlatController extends Controller
              END, nama_kategori"
         )->get();
 
-        $alatQuery = Alat::with('kategori')->orderBy('nama_alat');
+        $alatQuery = Alat::with(['kategori', 'units' => function ($query) {
+            $query->orderBy('kode_unik');
+        }])->orderBy('nama_alat');
 
         if ($request->filled('kategori_id')) {
             $alatQuery->where('kategori_id', $request->kategori_id);
-        }
-
-        if ($request->filled('kondisi')) {
-            $alatQuery->where('kondisi', $request->kondisi);
         }
 
         $alat = $alatQuery->get();
@@ -35,7 +33,6 @@ class AlatController extends Controller
             'alat' => $alat,
             'kategori' => $kategori,
             'selectedKategori' => $request->kategori_id,
-            'selectedKondisi' => $request->kondisi,
         ]);
     }
 }

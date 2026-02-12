@@ -14,12 +14,12 @@ class LaporanController extends Controller
         $validated = $request->validate([
             'from_date' => ['nullable', 'date'],
             'to_date' => ['nullable', 'date', 'after_or_equal:from_date'],
-            'status' => ['nullable', 'in:pending,disetujui,ditolak,dikembalikan'],
+            'status' => ['nullable', 'in:pending,disetujui,ditolak,pengembalian_pending,dikembalikan'],
             'export' => ['nullable', 'in:csv'],
         ]);
 
         $query = Peminjaman::query()
-            ->with(['user', 'detailPeminjamans.alat'])
+            ->with(['user', 'detailPeminjamans.alatUnit.alat', 'detailPeminjamans.alat'])
             ->orderByDesc('tanggal_pinjam')
             ->orderByDesc('id');
 
@@ -69,8 +69,9 @@ class LaporanController extends Controller
             foreach ($query->get() as $row) {
                 $detail = $row->detailPeminjamans
                     ->map(function ($item) {
-                        $nama = $item->alat->nama_alat ?? '-';
-                        return $nama . ' x' . $item->jumlah_pinjam;
+                        $nama = $item->alatUnit?->alat?->nama_alat ?? $item->alat?->nama_alat ?? '-';
+                        $kode = $item->alatUnit?->kode_unik ?? '-';
+                        return $nama . ' (' . $kode . ')';
                     })
                     ->implode('; ');
 

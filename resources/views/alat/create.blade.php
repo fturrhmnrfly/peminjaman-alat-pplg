@@ -198,6 +198,7 @@
             <div class="topbar">
                 <strong>Tambah Alat</strong>
                 <div class="user-info">
+                    <x-notification-bell />
                     <div class="user-avatar">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
                     </div>
@@ -244,6 +245,20 @@
                         <input type="number" name="jumlah" class="form-control @error('jumlah') error @enderror" 
                                value="{{ old('jumlah') }}" placeholder="Contoh: 10" min="0" required>
                         @error('jumlah')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        <div class="info-message">Jumlah akan otomatis mengikuti jumlah kode unik jika diisi.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Kode Unik Unit (1 baris = 1 unit)</label>
+                        <textarea name="kode_unik_list" class="form-control @error('kode_unik_list') error @enderror"
+                                  placeholder="Contoh:
+ASUS-001
+ASUS-002
+ASUS-003">{{ old('kode_unik_list') }}</textarea>
+                        <div class="info-message">Wajib diisi untuk kategori laptop.</div>
+                        @error('kode_unik_list')
                         <div class="error-message">{{ $message }}</div>
                         @enderror
                     </div>

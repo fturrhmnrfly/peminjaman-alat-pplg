@@ -7,10 +7,11 @@ use App\Http\Controllers\Admin\AlatController;
 use App\Http\Controllers\Admin\LogAktivitasController;
 use App\Http\Controllers\Petugas\VerifikasiPeminjamanController;
 use App\Http\Controllers\Petugas\LaporanController as PetugasLaporanController;
+use App\Http\Controllers\Petugas\PengembalianController as PetugasPengembalianController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Peminjam\PeminjamanController;
 use App\Http\Controllers\Peminjam\AlatController as PeminjamAlatController;
 use App\Http\Controllers\Peminjam\PengembalianController as PeminjamPengembalianController;
-use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,7 +22,13 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-// Admin Routes - TAMBAHKAN ->name('admin.')
+Route::middleware(['auth'])->group(function () {
+    Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifikasi/{notification}/read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.read');
+});
+
+// Admin Routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('user', UserController::class);
     Route::resource('kategori', KategoriController::class);
@@ -37,16 +44,9 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->group(function (
     Route::patch('/peminjaman/{peminjaman}/setujui', [VerifikasiPeminjamanController::class, 'setujui'])->name('peminjaman.setujui');
     Route::patch('/peminjaman/{peminjaman}/tolak', [VerifikasiPeminjamanController::class, 'tolak'])->name('peminjaman.tolak');
     Route::get('/laporan', [PetugasLaporanController::class, 'index'])->name('petugas.laporan');
-    Route::get('/pengembalian', function () {
-        $peminjaman = Peminjaman::with(['user', 'detailPeminjamans.alat'])
-            ->where('status', 'disetujui')
-            ->orderBy('tanggal_pinjam', 'desc')
-            ->paginate(15);
-
-        return view('petugas.pengembalian.index', [
-            'peminjaman' => $peminjaman,
-        ]);
-    })->name('petugas.pengembalian');
+    Route::get('/pengembalian', [PetugasPengembalianController::class, 'index'])->name('petugas.pengembalian');
+    Route::patch('/pengembalian/{peminjaman}/konfirmasi', [PetugasPengembalianController::class, 'konfirmasi'])
+        ->name('petugas.pengembalian.konfirmasi');
 });
 
 // Peminjam Routes

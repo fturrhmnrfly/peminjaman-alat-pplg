@@ -1,7 +1,17 @@
 <aside class="sidebar">
+    @php
+        $notifCount = \App\Models\Notification::query()
+            ->where('user_id', auth()->id())
+            ->orWhere(function ($query) {
+                $query->whereNull('user_id')->where('role', 'admin');
+            })
+            ->where('is_read', false)
+            ->count();
+    @endphp
     <div class="sidebar-brand">📚 Peminjaman Alat</div>
 
     <nav class="sidebar-menu">
+        <a href="{{ route('notifications.index') }}" @class(['active' => request()->routeIs('notifications.*')])>Notifikasi @if($notifCount > 0)<strong>({{ $notifCount }})</strong>@endif</a>
         <a href="{{ route('dashboard') }}" @class(['active' => request()->routeIs('dashboard')])>🏠 Dashboard</a>
         <a href="{{ route('admin.user.index') }}" @class(['active' => request()->routeIs('admin.user.*')])>👥 User</a>
         <a href="{{ route('admin.kategori.index') }}" @class(['active' => request()->routeIs('admin.kategori.*')])>📂 Kategori</a>

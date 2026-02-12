@@ -14,6 +14,9 @@ class Peminjaman extends Model
         'user_id',
         'tanggal_pinjam',
         'tanggal_kembali',
+        'waktu_pinjam',
+        'batas_kembali',
+        'waktu_pengembalian',
         'status',
     ];
 
@@ -21,6 +24,9 @@ class Peminjaman extends Model
     protected $casts = [
         'tanggal_pinjam' => 'date',
         'tanggal_kembali' => 'date',
+        'waktu_pinjam' => 'datetime',
+        'batas_kembali' => 'datetime',
+        'waktu_pengembalian' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -33,4 +39,3 @@ class Peminjaman extends Model
         return $this->hasMany(DetailPeminjaman::class);
     }
 }
-
