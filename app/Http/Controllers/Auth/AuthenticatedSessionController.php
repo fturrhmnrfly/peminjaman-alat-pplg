@@ -25,13 +25,19 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'username' => ['required', 'string'],
+            'login' => ['nullable', 'string'],
+            'username' => ['nullable', 'string'],
+            'email' => ['nullable', 'string'],
             'password' => ['required', 'string'],
         ]);
 
-        if (Auth::attempt(
-            ['username' => $request->username, 'password' => $request->password]
-        )) {
+        $login = $request->input('login')
+            ?: $request->input('email')
+            ?: $request->input('username');
+
+        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        if ($login && Auth::attempt([$field => $login, 'password' => $request->password])) {
             $request->session()->regenerate();
             LogAktivitas::catat('Login', 'Auth', 'User berhasil login');
 

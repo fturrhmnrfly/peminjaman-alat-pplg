@@ -58,7 +58,7 @@ class PeminjamanController extends Controller
 
         $peminjamanId = null;
         $totalItem = count($validated['items']);
-        DB::transaction(function () use ($validated, &$peminjamanId) {
+        DB::transaction(function () use ($validated, &$peminjamanId, $now, $end) {
             $peminjaman = Peminjaman::create([
                 'user_id' => auth()->id(),
                 'tanggal_pinjam' => $now->toDateString(),
