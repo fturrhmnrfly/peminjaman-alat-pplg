@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\LogAktivitas;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class LogAktivitasController extends Controller
@@ -13,44 +14,24 @@ class LogAktivitasController extends Controller
      */
     public function index(Request $request)
     {
-        $query = LogAktivitas::with('user')->orderBy('created_at', 'desc');
-
-        // Filter berdasarkan modul
-        if ($request->filled('modul')) {
-            $query->where('modul', $request->modul);
-        }
-
-        // Filter berdasarkan aksi
-        if ($request->filled('aksi')) {
-            $query->where('aksi', $request->aksi);
-        }
-
-        // Filter berdasarkan tanggal
-        if ($request->filled('tanggal_dari')) {
-            $query->whereDate('created_at', '>=', $request->tanggal_dari);
-        }
-
-        if ($request->filled('tanggal_sampai')) {
-            $query->whereDate('created_at', '<=', $request->tanggal_sampai);
-        }
-
-        // Search
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('nama_user', 'like', "%{$search}%")
-                  ->orWhere('keterangan', 'like', "%{$search}%")
-                  ->orWhere('ip_address', 'like', "%{$search}%");
-            });
-        }
+        $query = $this->filteredQuery($request);
 
         $logs = $query->paginate(20);
+        $logs->appends($request->query());
 
-        // Data untuk filter
-        $moduls = LogAktivitas::select('modul')->distinct()->pluck('modul');
-        $aksis = LogAktivitas::select('aksi')->distinct()->pluck('aksi');
+        ['moduls' => $moduls, 'aksis' => $aksis] = $this->filterOptions();
 
-        return view('logaktivitas.index', compact('logs', 'moduls', 'aksis'));
+        return view('logaktivitas.index', [
+            'logs' => $logs,
+            'moduls' => $moduls,
+            'aksis' => $aksis,
+            'filters' => $request->only(['search', 'modul', 'aksi', 'tanggal_dari', 'tanggal_sampai']),
+            'summary' => [
+                'total' => (clone $query)->count(),
+                'today' => (clone $query)->whereDate('created_at', now('Asia/Jakarta')->toDateString())->count(),
+                'latest' => optional((clone $query)->first())->created_at,
+            ],
+        ]);
     }
 
     /**
@@ -73,18 +54,7 @@ class LogAktivitasController extends Controller
      */
     public function export(Request $request)
     {
-        $query = LogAktivitas::with('user')->orderBy('created_at', 'desc');
-
-        // Apply filters sama seperti index
-        if ($request->filled('modul')) {
-            $query->where('modul', $request->modul);
-        }
-
-        if ($request->filled('aksi')) {
-            $query->where('aksi', $request->aksi);
-        }
-
-        $logs = $query->get();
+        $logs = $this->filteredQuery($request)->get();
 
         $filename = 'log_aktivitas_' . now()->timezone('Asia/Jakarta')->format('Y-m-d_His') . '.csv';
         
@@ -115,5 +85,72 @@ class LogAktivitasController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $logs = $this->filteredQuery($request)->get();
+        $filters = $this->normalizedFilters($request);
+
+        $pdf = Pdf::loadView('logaktivitas.pdf', [
+            'logs' => $logs,
+            'filters' => $filters,
+            'printedAt' => now('Asia/Jakarta'),
+        ])->setPaper('a4', 'landscape');
+
+        $filename = 'log_aktivitas_' . now('Asia/Jakarta')->format('Y-m-d_His') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    private function filteredQuery(Request $request)
+    {
+        $query = LogAktivitas::with('user')->orderBy('created_at', 'desc');
+
+        if ($request->filled('modul')) {
+            $query->where('modul', $request->modul);
+        }
+
+        if ($request->filled('aksi')) {
+            $query->where('aksi', $request->aksi);
+        }
+
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate('created_at', '>=', $request->tanggal_dari);
+        }
+
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate('created_at', '<=', $request->tanggal_sampai);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_user', 'like', "%{$search}%")
+                    ->orWhere('keterangan', 'like', "%{$search}%")
+                    ->orWhere('ip_address', 'like', "%{$search}%");
+            });
+        }
+
+        return $query;
+    }
+
+    private function filterOptions(): array
+    {
+        return [
+            'moduls' => LogAktivitas::query()->select('modul')->distinct()->orderBy('modul')->pluck('modul'),
+            'aksis' => LogAktivitas::query()->select('aksi')->distinct()->orderBy('aksi')->pluck('aksi'),
+        ];
+    }
+
+    private function normalizedFilters(Request $request): array
+    {
+        return [
+            'search' => (string) $request->input('search', ''),
+            'modul' => (string) $request->input('modul', ''),
+            'aksi' => (string) $request->input('aksi', ''),
+            'tanggal_dari' => (string) $request->input('tanggal_dari', ''),
+            'tanggal_sampai' => (string) $request->input('tanggal_sampai', ''),
+        ];
     }
 }

@@ -1,13 +1,17 @@
+ :root {
+    --petugas-sidebar-width: 300px;
+ }
+
 /* ===== SIDEBAR ===== */
 .sidebar {
     position: fixed;
     left: 0;
     top: 0;
-    width: 260px;
+    width: var(--petugas-sidebar-width);
     height: 100vh;
     background: linear-gradient(180deg, #1e3a8a, #1e40af);
     color: white;
-    padding: 25px 20px;
+    padding: 24px 22px;
     display: flex;
     flex-direction: column;
     z-index: 1000;
@@ -18,7 +22,7 @@
 .sidebar-brand {
     font-size: 20px;
     font-weight: 600;
-    margin-bottom: 40px;
+    margin-bottom: 36px;
     flex-shrink: 0;
 }
 
@@ -33,13 +37,15 @@
 .sidebar-menu a {
     text-decoration: none;
     color: #e5e7eb;
-    padding: 12px 15px;
+    padding: 12px 14px;
     border-radius: 10px;
     transition: 0.3s;
     display: flex;
     align-items: center;
     gap: 10px;
     flex-shrink: 0;
+    line-height: 1.4;
+    font-size: 14px;
 }
 
 .sidebar-menu a:hover,
@@ -82,11 +88,17 @@
 }
 
 .main {
-    margin-left: 260px;
+    margin-left: var(--petugas-sidebar-width);
     flex: 1;
     padding: 30px;
     overflow-y: auto;
     height: 100vh;
+}
+
+@media (max-width: 1200px) {
+    :root {
+        --petugas-sidebar-width: 280px;
+    }
 }
 
 /* Mobile Responsive */

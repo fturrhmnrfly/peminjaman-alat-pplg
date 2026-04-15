@@ -8,7 +8,6 @@
     @vite(['resources/css/admin-sidebar.css', 'resources/js/app.js'])
 
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -18,36 +17,47 @@
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
             background: #f5f7fb;
+            color: #1f2937;
         }
 
-        /* ===== LAYOUT ===== */
         .layout {
             display: flex;
             min-height: 100vh;
         }
 
-        /* ===== MAIN CONTENT ===== */
         .main {
             flex: 1;
             padding: 30px;
-            overflow-y: auto;
         }
 
-        /* ===== TOPBAR ===== */
+        .topbar,
+        .content-card,
+        .filter-card,
+        .table-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+        }
+
         .topbar {
-            background: white;
             padding: 18px 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
 
-        .topbar strong {
-            font-size: 18px;
-            color: #1f2937;
+        .page-intro {
+            margin-bottom: 20px;
+        }
+
+        .page-intro h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .page-intro p {
+            color: #6b7280;
         }
 
         .user-info {
@@ -66,61 +76,43 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
         }
 
-        .user-info span {
-            font-size: 14px;
-            color: #374151;
-            font-weight: 500;
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
         }
 
-        /* ===== LOGOUT BUTTON ===== */
-        .logout-btn {
-            background: #ef4444;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            width: 100%;
+        .summary-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 16px 18px;
         }
 
-        .logout-btn:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        .summary-label {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 6px;
         }
 
-        /* ===== CONTENT HEADER ===== */
-        .content-header {
-            margin-bottom: 30px;
-        }
-
-        .content-header h1 {
-            font-size: 28px;
-            color: #1f2937;
-            margin-bottom: 8px;
+        .summary-value {
+            font-size: 24px;
             font-weight: 700;
         }
 
-        .content-header p {
+        .summary-note {
             color: #6b7280;
-            font-size: 15px;
+            font-size: 12px;
+            margin-top: 4px;
         }
 
-        /* ===== ALERT ===== */
         .alert {
-            padding: 14px 18px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
         }
 
         .alert-success {
@@ -135,20 +127,33 @@
             border-left: 4px solid #ef4444;
         }
 
-        /* ===== FILTER SECTION ===== */
-        .filter-section {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            margin-bottom: 24px;
+        .filter-card {
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .filter-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .filter-head h2 {
+            font-size: 20px;
+        }
+
+        .filter-head p {
+            color: #6b7280;
+            font-size: 14px;
         }
 
         .filter-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 18px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
         }
 
         .form-group {
@@ -164,80 +169,87 @@
         }
 
         .form-control {
-            padding: 10px 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #dbe2ea;
+            border-radius: 12px;
             font-size: 14px;
-            transition: all 0.3s ease;
-            background: #fafbfc;
+            background: #f8fafc;
+            transition: 0.2s ease;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: #3b82f6;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: #2563eb;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
 
         .filter-actions {
             display: flex;
-            gap: 10px;
             flex-wrap: wrap;
+            gap: 10px;
         }
 
-        /* ===== BUTTONS ===== */
         .btn {
-            padding: 10px 18px;
             border: none;
-            border-radius: 8px;
-            font-size: 13px;
+            border-radius: 12px;
+            padding: 10px 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
         }
 
         .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            background: #1d4ed8;
+            color: #fff;
         }
 
         .btn-secondary {
-            background: #6b7280;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #4b5563;
-            transform: translateY(-2px);
+            background: #64748b;
+            color: #fff;
         }
 
         .btn-success {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-success:hover {
             background: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            color: #fff;
         }
 
-        /* ===== TABLE ===== */
-        .table-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        .btn-outline {
+            background: #fff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .table-card {
             overflow: hidden;
+        }
+
+        .table-head {
+            padding: 18px 22px;
+            border-bottom: 1px solid #eef2f7;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .table-head h2 {
+            font-size: 20px;
+        }
+
+        .table-head p {
+            color: #6b7280;
+            font-size: 14px;
         }
 
         .table-wrapper {
@@ -250,157 +262,165 @@
         }
 
         thead {
-            background: linear-gradient(135deg, #1e40af, #3b82f6);
-            color: white;
+            background: #eff6ff;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         th {
-            padding: 16px;
-            text-align: left;
-            font-weight: 600;
             font-size: 13px;
-            letter-spacing: 0.5px;
-        }
-
-        td {
-            padding: 14px 16px;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: 14px;
+            color: #334155;
         }
 
         tbody tr:hover {
-            background: #f9fafb;
+            background: #fafcff;
         }
 
-        /* ===== BADGE ===== */
         .badge {
-            padding: 5px 11px;
-            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 999px;
             font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
-            text-transform: capitalize;
+            font-weight: 700;
         }
 
         .badge-login {
             background: #dbeafe;
-            color: #1e40af;
+            color: #1d4ed8;
         }
 
-        .badge-logout {
+        .badge-logout,
+        .badge-delete {
             background: #fee2e2;
-            color: #991b1b;
+            color: #b91c1c;
         }
 
         .badge-create {
             background: #d1fae5;
-            color: #065f46;
+            color: #047857;
         }
 
         .badge-update {
             background: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-delete {
-            background: #fee2e2;
-            color: #991b1b;
+            color: #b45309;
         }
 
         .badge-view {
             background: #e0e7ff;
-            color: #3730a3;
-        }
-        
-        /* ===== EMPTY STATE ===== */
-        .empty-state {
-            text-align: center;
-            padding: 60px 24px;
+            color: #4338ca;
         }
 
-        .empty-state-icon {
-            font-size: 56px;
-            margin-bottom: 16px;
-            opacity: 0.4;
+        .muted {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            padding: 52px 24px;
+            text-align: center;
         }
 
         .empty-state h3 {
-            font-size: 18px;
-            color: #1f2937;
+            font-size: 20px;
             margin-bottom: 8px;
-            font-weight: 600;
         }
 
         .empty-state p {
             color: #6b7280;
-            font-size: 14px;
         }
 
-        /* ===== RESPONSIVE ===== */
+        .pagination-wrap {
+            padding: 16px 22px;
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
         @media (max-width: 768px) {
-            .layout {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: static;
-            }
-
             .main {
                 padding: 20px;
             }
 
-            .filter-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .topbar {
+            .topbar,
+            .filter-head,
+            .table-head {
                 flex-direction: column;
-                gap: 15px;
+                align-items: flex-start;
             }
 
-            .pagination-wrapper {
+            .filter-actions {
                 flex-direction: column;
-                gap: 12px;
-                justify-content: center;
-                text-align: center;
-                padding: 10px 24px;
             }
 
-            .pagination {
-                justify-content: center;
+            .filter-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff;
             }
 
-            .pagination a,
-            .pagination span {
-                padding: 5px 7px;
-                font-size: 11px;
+            .layout {
+                display: block;
             }
 
-            table {
-                font-size: 12px;
+            x-admin-sidebar,
+            .topbar,
+            .filter-card,
+            .pagination-wrap,
+            .screen-only {
+                display: none !important;
             }
 
-            th, td {
-                padding: 10px 8px;
+            .main {
+                padding: 0;
+            }
+
+            .table-card,
+            .summary-card {
+                box-shadow: none;
+                border: 1px solid #d1d5db;
+            }
+
+            .print-only {
+                display: block;
+                margin-bottom: 18px;
             }
         }
     </style>
 </head>
 
 <body>
-
     <div class="layout">
-        <!-- SIDEBAR - DARI COMPONENT -->
         <x-admin-sidebar />
-        
-        <!-- MAIN CONTENT -->
-        <main class="main">
 
-            <!-- TOPBAR -->
-            <div class="topbar">
+        <main class="main">
+            <div class="topbar screen-only">
                 <strong>Log Aktivitas</strong>
                 <div class="user-info">
                     <x-notification-bell />
@@ -411,137 +431,165 @@
                 </div>
             </div>
 
-            <!-- HEADER -->
-            <div class="content-header">
-                <h1>📋 Log Aktivitas</h1>
-                <p>Riwayat semua aktivitas pengguna dalam sistem</p>
+            <div class="page-intro">
+                <h1>Log Aktivitas</h1>
+                <p>Riwayat aktivitas pengguna sistem yang bisa difilter, dicetak, diexport CSV, atau diunduh sebagai PDF.</p>
             </div>
 
-            <!-- ALERT -->
-            @if(session('success'))
-            <div class="alert alert-success">
-                ✓ {{ session('success') }}
+            <div class="print-only">
+                <h2>Laporan Log Aktivitas</h2>
+                <p class="muted">Dicetak pada {{ now('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</p>
             </div>
+
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
             @endif
 
             @if(session('error'))
-            <div class="alert alert-error">
-                ✗ {{ session('error') }}
-            </div>
+                <div class="alert alert-error">{{ session('error') }}</div>
             @endif
 
-            <!-- FILTER SECTION -->
-            <div class="filter-section">
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-label">Total Data</div>
+                    <div class="summary-value">{{ number_format($summary['total']) }}</div>
+                    <div class="summary-note">Sesuai filter yang aktif</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Aktivitas Hari Ini</div>
+                    <div class="summary-value">{{ number_format($summary['today']) }}</div>
+                    <div class="summary-note">Pada tanggal {{ now('Asia/Jakarta')->format('d/m/Y') }}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Aktivitas Terbaru</div>
+                    <div class="summary-value" style="font-size: 18px;">
+                        {{ optional($summary['latest'])->timezone('Asia/Jakarta')->format('d/m/Y H:i') ?? '-' }}
+                    </div>
+                    <div class="summary-note">Waktu log terakhir yang cocok</div>
+                </div>
+            </div>
+
+            <div class="filter-card screen-only">
+                <div class="filter-head">
+                    <div>
+                        <h2>Filter Laporan</h2>
+                        <p>Gunakan filter di bawah untuk mempersempit data log yang ingin ditinjau atau dilaporkan.</p>
+                    </div>
+                </div>
+
                 <form method="GET" action="{{ route('admin.log.index') }}">
                     <div class="filter-grid">
-                        <div class="form-group">
-                            <label>🔍 Cari</label>
-                            <input type="text" name="search" class="form-control" placeholder="Nama user, keterangan, IP..." value="{{ request('search') }}">
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label for="search">Pencarian</label>
+                            <input id="search" type="text" name="search" class="form-control" placeholder="Nama user, keterangan, atau IP address" value="{{ $filters['search'] ?? '' }}">
                         </div>
 
                         <div class="form-group">
-                            <label>📂 Modul</label>
-                            <select name="modul" class="form-control">
-                                <option value="">Semua Modul</option>
+                            <label for="modul">Modul</label>
+                            <select id="modul" name="modul" class="form-control">
+                                <option value="">Semua modul</option>
                                 @foreach($moduls as $modul)
-                                <option value="{{ $modul }}" {{ request('modul') == $modul ? 'selected' : '' }}>
-                                    {{ $modul }}
-                                </option>
+                                    <option value="{{ $modul }}" @selected(($filters['modul'] ?? '') === $modul)>{{ $modul }}</option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label>⚡ Aksi</label>
-                            <select name="aksi" class="form-control">
-                                <option value="">Semua Aksi</option>
+                            <label for="aksi">Aksi</label>
+                            <select id="aksi" name="aksi" class="form-control">
+                                <option value="">Semua aksi</option>
                                 @foreach($aksis as $aksi)
-                                <option value="{{ $aksi }}" {{ request('aksi') == $aksi ? 'selected' : '' }}>
-                                    {{ $aksi }}
-                                </option>
+                                    <option value="{{ $aksi }}" @selected(($filters['aksi'] ?? '') === $aksi)>{{ $aksi }}</option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label>📅 Dari Tanggal</label>
-                            <input type="date" name="tanggal_dari" class="form-control" value="{{ request('tanggal_dari') }}">
+                            <label for="tanggal_dari">Dari Tanggal</label>
+                            <input id="tanggal_dari" type="date" name="tanggal_dari" class="form-control" value="{{ $filters['tanggal_dari'] ?? '' }}">
                         </div>
 
                         <div class="form-group">
-                            <label>📅 Sampai Tanggal</label>
-                            <input type="date" name="tanggal_sampai" class="form-control" value="{{ request('tanggal_sampai') }}">
+                            <label for="tanggal_sampai">Sampai Tanggal</label>
+                            <input id="tanggal_sampai" type="date" name="tanggal_sampai" class="form-control" value="{{ $filters['tanggal_sampai'] ?? '' }}">
                         </div>
                     </div>
 
                     <div class="filter-actions">
-                        <button type="submit" class="btn btn-primary">🔍 Filter</button>
-                        <a href="{{ route('admin.log.index') }}" class="btn btn-secondary">🔄 Reset</a>
-                        <a href="{{ route('admin.log.export', request()->all()) }}" class="btn btn-success">📥 Export CSV</a>
+                        <button type="submit" class="btn btn-primary">Terapkan Filter</button>
+                        <a href="{{ route('admin.log.index') }}" class="btn btn-secondary">Reset</a>
+                        <a href="{{ route('admin.log.export', request()->query()) }}" class="btn btn-success">Unduh CSV</a>
+                        <button type="button" class="btn btn-outline" onclick="window.print()">Cetak</button>
+                        <a href="{{ route('admin.log.export-pdf', request()->query()) }}" class="btn btn-outline">Unduh PDF</a>
                     </div>
                 </form>
             </div>
 
-            <!-- TABLE -->
-            <div class="table-container">
+            <div class="table-card">
+                <div class="table-head">
+                    <div>{{--  --}}
+                        <h2>Daftar Aktivitas</h2>
+                        <p>Menampilkan {{ $logs->count() }} data pada halaman ini.</p>
+                    </div>
+                </div>
+
                 <div class="table-wrapper">
                     @if($logs->count() > 0)
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Waktu</th>
-                                <th>User</th>
-                                <th>Aksi</th>
-                                <th>Modul</th>
-                                <th>Keterangan</th>
-                                <th>IP Address</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($logs as $index => $log)
-                            <tr>
-                                <td>{{ $logs->firstItem() + $index }}</td>
-                                <td>{{ $log->created_at->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
-                                <td>
-                                    <strong>{{ $log->nama_user }}</strong>
-                                    @if($log->user)
-                                    <br><small style="color: #6b7280; font-size: 12px;">{{ $log->user->email ?? '-' }}</small>
-                                    @endif
-                                </td>
-                                <td>
-                                    @php
-                                        $badgeClass = 'badge-view';
-                                        if(strtolower($log->aksi) == 'login') $badgeClass = 'badge-login';
-                                        elseif(strtolower($log->aksi) == 'logout') $badgeClass = 'badge-logout';
-                                        elseif(strtolower($log->aksi) == 'create') $badgeClass = 'badge-create';
-                                        elseif(strtolower($log->aksi) == 'update') $badgeClass = 'badge-update';
-                                        elseif(strtolower($log->aksi) == 'delete') $badgeClass = 'badge-delete';
-                                    @endphp
-                                    <span class="badge {{ $badgeClass }}">{{ $log->aksi }}</span>
-                                </td>
-                                <td>{{ $log->modul }}</td>
-                                <td>{{ $log->keterangan ?? '-' }}</td>
-                                <td>
-                                    <small style="color: #6b7280;">{{ $log->ip_address }}</small>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Waktu</th>
+                                    <th>User</th>
+                                    <th>Aksi</th>
+                                    <th>Modul</th>
+                                    <th>Keterangan</th>
+                                    <th>IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($logs as $index => $log)
+                                    <tr>
+                                        <td>{{ $logs->firstItem() + $index }}</td>
+                                        <td>{{ $log->created_at->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
+                                        <td>
+                                            <div><strong>{{ $log->nama_user }}</strong></div>
+                                            <div class="muted">{{ $log->user->email ?? '-' }}</div>
+                                        </td>
+                                        <td>
+                                            @php
+                                                $badgeClass = 'badge-view';
+                                                if (strtolower($log->aksi) === 'login') $badgeClass = 'badge-login';
+                                                elseif (strtolower($log->aksi) === 'logout') $badgeClass = 'badge-logout';
+                                                elseif (strtolower($log->aksi) === 'create') $badgeClass = 'badge-create';
+                                                elseif (strtolower($log->aksi) === 'update') $badgeClass = 'badge-update';
+                                                elseif (strtolower($log->aksi) === 'delete') $badgeClass = 'badge-delete';
+                                            @endphp
+                                            <span class="badge {{ $badgeClass }}">{{ $log->aksi }}</span>
+                                        </td>
+                                        <td>{{ $log->modul }}</td>
+                                        <td>{{ $log->keterangan ?? '-' }}</td>
+                                        <td><span class="muted">{{ $log->ip_address }}</span></td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     @else
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📋</div>
-                        <h3>Tidak ada log aktivitas</h3>
-                        <p>Belum ada aktivitas yang tercatat dalam sistem</p>
-                    </div>
+                        <div class="empty-state">
+                            <h3>Tidak ada log aktivitas</h3>
+                            <p>Belum ada data yang sesuai dengan filter saat ini.</p>
+                        </div>
                     @endif
                 </div>
-            </div>
 
+                @if($logs->hasPages())
+                    <div class="pagination-wrap screen-only">
+                        {{ $logs->links() }}
+                    </div>
+                @endif
+            </div>
         </main>
     </div>
-
 </body>
 
 </html>

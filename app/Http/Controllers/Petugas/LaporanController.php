@@ -62,6 +62,7 @@ class LaporanController extends Controller
                 'Username',
                 'Tanggal Pinjam',
                 'Tanggal Kembali',
+                'Denda',
                 'Status',
                 'Detail Alat',
             ]);
@@ -81,6 +82,7 @@ class LaporanController extends Controller
                     $row->user->username ?? '-',
                     optional($row->tanggal_pinjam)->format('Y-m-d') ?? '',
                     optional($row->tanggal_kembali)->format('Y-m-d') ?? '',
+                    $row->total_denda,
                     $row->status,
                     $detail,
                 ]);

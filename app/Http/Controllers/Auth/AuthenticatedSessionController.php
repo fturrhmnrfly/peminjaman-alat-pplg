@@ -38,6 +38,17 @@ class AuthenticatedSessionController extends Controller
         $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         if ($login && Auth::attempt([$field => $login, 'password' => $request->password])) {
+            $user = Auth::user();
+
+            if (! $user?->email_verified_at) {
+                Auth::logout();
+                $request->session()->put('pending_registration_user_id', $user->id);
+
+                return redirect()->route('register.verify.notice')->withErrors([
+                    'username' => 'Email akun ini belum diverifikasi. Masukkan kode verifikasi yang dikirim ke email kamu.',
+                ]);
+            }
+
             $request->session()->regenerate();
             LogAktivitas::catat('Login', 'Auth', 'User berhasil login');
 

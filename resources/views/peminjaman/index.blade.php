@@ -71,11 +71,53 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
         .header-action h2 {
             font-size: 22px;
             color: #1f2937;
+        }
+
+        .header-copy p {
+            margin-top: 6px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
         }
 
         .alert {
@@ -177,11 +219,30 @@
             white-space: nowrap;
         }
 
+        .text-muted {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .text-danger {
+            color: #b91c1c;
+            font-weight: 700;
+        }
+
+        .text-success {
+            color: #065f46;
+            font-weight: 700;
+        }
+
         .pagination {
             display: flex;
             justify-content: center;
             gap: 5px;
             margin-top: 20px;
+        }
+
+        .print-only {
+            display: none;
         }
 
         .logout-btn {
@@ -198,6 +259,53 @@
 
         .logout-btn:hover {
             background: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .header-action {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .action-buttons {
+                width: 100%;
+            }
+
+            .action-buttons .btn {
+                width: 100%;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .layout {
+                display: block;
+            }
+
+            x-admin-sidebar,
+            .topbar,
+            .action-buttons,
+            .pagination,
+            .screen-only {
+                display: none !important;
+            }
+
+            .main {
+                padding: 0;
+            }
+
+            .content-card {
+                box-shadow: none;
+                border: 1px solid #d1d5db;
+            }
+
+            .print-only {
+                display: block;
+                margin-bottom: 18px;
+            }
         }
     </style>
 </head>
@@ -226,6 +334,10 @@
 
             <!-- CONTENT -->
             <div class="content-card">
+                <div class="print-only">
+                    <h2>Data Peminjaman</h2>
+                    <p class="text-muted">Dicetak pada {{ now('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</p>
+                </div>
 
                 <!-- Alert Messages -->
                 @if(session('success'))
@@ -241,7 +353,14 @@
                 @endif
 
                 <div class="header-action">
-                    <h2>Daftar Peminjaman</h2>
+                    <div class="header-copy">
+                        <h2>Daftar Peminjaman</h2>
+                        <p class="screen-only">Pantau data peminjaman, lihat denda, lalu cetak halaman atau unduh PDF sebagai laporan.</p>
+                    </div>
+                    <div class="action-buttons screen-only">
+                        <button type="button" class="btn btn-outline" onclick="window.print()">Cetak Halaman</button>
+                        <a href="{{ route('admin.peminjaman.export-pdf') }}" class="btn btn-primary">Unduh PDF</a>
+                    </div>
                 </div>
 
                 <table>
@@ -250,6 +369,7 @@
                             <th>No</th>
                             <th>Peminjam</th>
                             <th>Tanggal</th>
+                            <th>Denda</th>
                             <th>Status</th>
                             <th>Detail Alat</th>
                         </tr>
@@ -267,6 +387,18 @@
                             <td>
                                 <div>Pinjam: {{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</div>
                                 <div>Kembali: {{ optional($row->tanggal_kembali)->format('d/m/Y') ?? '-' }}</div>
+                                <div class="text-muted">
+                                    Pengajuan: {{ optional($row->waktu_pengajuan_pengembalian)->format('d/m/Y H:i') ?? '-' }} WIB
+                                </div>
+                            </td>
+                            <td>
+                                @if($row->total_denda > 0)
+                                    <div class="text-danger">{{ $row->total_denda_formatted }}</div>
+                                    <div class="text-muted">Terlambat: {{ $row->denda_formatted }}</div>
+                                    <div class="text-muted">Kerusakan: {{ $row->denda_kerusakan_total_formatted }}</div>
+                                @else
+                                    <div class="text-success">Tidak ada</div>
+                                @endif
                             </td>
                             <td>
                                 @php
@@ -298,7 +430,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 30px; color: #9ca3af;">
+                            <td colspan="6" style="text-align: center; padding: 30px; color: #9ca3af;">
                                 Belum ada data peminjaman
                             </td>
                         </tr>

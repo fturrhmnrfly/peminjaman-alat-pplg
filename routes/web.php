@@ -35,6 +35,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('alat', AlatController::class);
     Route::resource('log', LogAktivitasController::class)->only(['index']);
     Route::get('log/export', [LogAktivitasController::class, 'export'])->name('log.export');
+    Route::get('log/export-pdf', [LogAktivitasController::class, 'exportPdf'])->name('log.export-pdf');
+    Route::get('peminjaman/export-pdf', [\App\Http\Controllers\Admin\PeminjamanController::class, 'exportPdf'])->name('peminjaman.export-pdf');
     Route::resource('peminjaman', \App\Http\Controllers\Admin\PeminjamanController::class)->only(['index']);
 });
 

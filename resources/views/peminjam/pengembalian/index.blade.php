@@ -147,6 +147,30 @@
             font-weight: 600;
         }
 
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .badge-selesai {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .divider {
+            margin: 28px 0;
+            border: none;
+            border-top: 1px solid #e5e7eb;
+        }
+
         .logout-btn {
             background: #ef4444;
             color: white;
@@ -186,7 +210,7 @@
                 <p class="section-desc">Ajukan pengembalian untuk peminjaman yang sudah disetujui.</p>
                 <div class="alert alert-error" style="margin-bottom: 15px;">
                     <strong>Peringatan:</strong> Alat harus dikembalikan paling lambat pukul 15:00 WIB ke ruang PPLG.
-                    Terlambat dikenakan denda Rp 2.000. Jika terjadi kerusakan atau kehilangan, peminjam wajib bertanggung jawab kepada pihak sekolah.
+                    Terlambat dikenakan denda Rp 2.000 setiap kali melewati batas pukul 15:00 WIB. Jika besok lewat jam 15:00 WIB lagi, denda menjadi Rp 4.000, lalu terus bertambah untuk hari berikutnya. Jika terjadi kerusakan atau kehilangan, peminjam wajib bertanggung jawab kepada pihak sekolah.
                 </div>
 
                 @if(session('success'))
@@ -206,6 +230,7 @@
                         <tr>
                             <th>Tanggal Pinjam</th>
                             <th>Detail Alat</th>
+                            <th>Denda</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -226,6 +251,18 @@
                                 </div>
                             </td>
                             <td>
+                                @php
+                                    $estimasiDenda = $row->hitungDendaOtomatis(now('Asia/Jakarta'));
+                                    $estimasiHariTerlambat = (int) ($estimasiDenda / \App\Models\Peminjaman::DENDA_TERLAMBAT);
+                                @endphp
+                                @if($estimasiDenda > 0)
+                                    <strong style="color: #b91c1c;">Rp {{ number_format($estimasiDenda, 0, ',', '.') }}</strong>
+                                    <div style="color: #6b7280; font-size: 12px;">{{ $estimasiHariTerlambat }} kali melewati batas jam 15:00 WIB</div>
+                                @else
+                                    <span style="color: #065f46; font-weight: 600;">Tidak ada</span>
+                                @endif
+                            </td>
+                            <td>
                                 <form method="POST" action="{{ route('peminjam.pengembalian.update', $row->id) }}">
                                     @csrf
                                     @method('PATCH')
@@ -235,8 +272,74 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="3" style="text-align: center; padding: 30px; color: #9ca3af;">
+                            <td colspan="4" style="text-align: center; padding: 30px; color: #9ca3af;">
                                 Tidak ada peminjaman yang perlu dikembalikan
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                <hr class="divider">
+
+                <h2 class="section-title">Riwayat Pengembalian</h2>
+                <p class="section-desc">Lihat pengembalian yang sudah diajukan, sedang menunggu konfirmasi, atau sudah selesai diproses.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Detail Alat</th>
+                            <th>Status</th>
+                            <th>Total Denda</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($riwayatPengembalian as $row)
+                        <tr>
+                            <td>
+                                <div>Pinjam: {{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</div>
+                                <div style="color: #6b7280; font-size: 12px;">
+                                    Ajukan kembali: {{ optional($row->waktu_pengajuan_pengembalian)->format('d/m/Y H:i') ?? '-' }} WIB
+                                </div>
+                                <div style="color: #6b7280; font-size: 12px;">
+                                    Dikonfirmasi: {{ optional($row->waktu_pengembalian)->format('d/m/Y H:i') ?? '-' }} WIB
+                                </div>
+                            </td>
+                            <td>
+                                <div class="item-list">
+                                    @forelse($row->detailPeminjamans as $detail)
+                                    <div class="item">
+                                        <span class="item-name">{{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}</span>
+                                        <span class="item-qty">{{ $detail->alatUnit?->kode_unik ?? '-' }}</span>
+                                    </div>
+                                    @empty
+                                    <div style="color: #9ca3af;">Tidak ada detail alat</div>
+                                    @endforelse
+                                </div>
+                            </td>
+                            <td>
+                                @if($row->status === 'pengembalian_pending')
+                                    <span class="badge badge-pending">Menunggu Konfirmasi</span>
+                                @else
+                                    <span class="badge badge-selesai">Dikembalikan</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($row->total_denda > 0)
+                                    <strong style="color: #b91c1c;">{{ $row->total_denda_formatted }}</strong>
+                                    <div style="color: #6b7280; font-size: 12px;">
+                                        Terlambat: {{ $row->denda_formatted }} | Kerusakan: {{ $row->denda_kerusakan_total_formatted }}
+                                    </div>
+                                @else
+                                    <span style="color: #065f46; font-weight: 600;">Tidak ada</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 30px; color: #9ca3af;">
+                                Belum ada riwayat pengembalian
                             </td>
                         </tr>
                         @endforelse

@@ -14,6 +14,13 @@ class DetailPeminjaman extends Model
         'alat_id',
         'alat_unit_id',
         'jumlah_pinjam',
+        'kondisi_pengembalian',
+        'denda_kerusakan',
+        'detail_kerusakan',
+    ];
+
+    protected $casts = [
+        'denda_kerusakan' => 'integer',
     ];
 
     public function peminjaman(): BelongsTo
@@ -29,5 +36,20 @@ class DetailPeminjaman extends Model
     public function alatUnit(): BelongsTo
     {
         return $this->belongsTo(AlatUnit::class, 'alat_unit_id');
+    }
+
+    public function getDendaKerusakanFormattedAttribute(): string
+    {
+        return 'Rp ' . number_format($this->denda_kerusakan ?? 0, 0, ',', '.');
+    }
+
+    public function getKondisiPengembalianLabelAttribute(): string
+    {
+        return match ($this->kondisi_pengembalian) {
+            'rusak_ringan' => 'Rusak Ringan',
+            'rusak_berat' => 'Rusak Berat',
+            'hilang' => 'Hilang',
+            default => 'Baik',
+        };
     }
 }

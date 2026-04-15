@@ -250,6 +250,15 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Email (Opsional)</label>
+                        <input type="email" name="email" class="form-control @error('email') error @enderror"
+                               value="{{ old('email', $user->email) }}" placeholder="Masukkan email user">
+                        @error('email')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
                         <label>Role <span>*</span></label>
                         <select name="role" class="form-control @error('role') error @enderror" required>
                             <option value="">-- Pilih Role --</option>

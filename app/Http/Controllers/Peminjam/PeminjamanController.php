@@ -36,14 +36,8 @@ class PeminjamanController extends Controller
     public function store(Request $request)
     {
         $now = Carbon::now('Asia/Jakarta');
-        $start = $now->copy()->setTime(7, 0, 0);
         $end = $now->copy()->setTime(15, 0, 0);
-
-        if ($now->lt($start) || $now->gt($end)) {
-            return back()
-                ->withErrors(['items' => 'Peminjaman hanya dibuka pukul 07:00 - 15:00 WIB.'])
-                ->withInput();
-        }
+        $batasKembali = $now->gt($end) ? $end->copy()->addDay() : $end;
 
         $validated = $request->validate([
             'items' => ['required', 'array', 'min:1'],
@@ -58,12 +52,12 @@ class PeminjamanController extends Controller
 
         $peminjamanId = null;
         $totalItem = count($validated['items']);
-        DB::transaction(function () use ($validated, &$peminjamanId, $now, $end) {
+        DB::transaction(function () use ($validated, &$peminjamanId, $now, $batasKembali) {
             $peminjaman = Peminjaman::create([
                 'user_id' => auth()->id(),
                 'tanggal_pinjam' => $now->toDateString(),
                 'waktu_pinjam' => $now,
-                'batas_kembali' => $end,
+                'batas_kembali' => $batasKembali,
                 'status' => 'pending',
             ]);
             $peminjamanId = $peminjaman->id;

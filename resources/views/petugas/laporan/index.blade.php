@@ -96,6 +96,7 @@
                             <th>ID</th>
                             <th>Peminjam</th>
                             <th>Tanggal</th>
+                            <th>Denda</th>
                             <th>Status</th>
                             <th>Detail Alat</th>
                         </tr>
@@ -111,6 +112,16 @@
                                 <td>
                                     <div>Pinjam: {{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</div>
                                     <div>Kembali: {{ optional($row->tanggal_kembali)->format('d/m/Y') ?? '-' }}</div>
+                                </td>
+                                <td>
+                                    @if($row->total_denda > 0)
+                                        <strong style="color:#b91c1c;">{{ $row->total_denda_formatted }}</strong>
+                                        <div style="color:#6b7280;font-size:12px;">
+                                            Terlambat: {{ $row->denda_formatted }} ({{ $row->jumlah_hari_terlambat }} kali) | Kerusakan: {{ $row->denda_kerusakan_total_formatted }}
+                                        </div>
+                                    @else
+                                        <span style="color:#065f46;font-weight:600;">Tidak ada</span>
+                                    @endif
                                 </td>
                                 <td>
                                     @php
@@ -140,7 +151,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" style="text-align:center;padding:30px;color:#9ca3af;">
+                                <td colspan="6" style="text-align:center;padding:30px;color:#9ca3af;">
                                     Tidak ada data untuk filter ini.
                                 </td>
                             </tr>

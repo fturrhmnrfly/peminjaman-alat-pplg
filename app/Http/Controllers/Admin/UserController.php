@@ -31,6 +31,7 @@ class UserController extends Controller
             'username' => 'required|string|unique:users,username|max:255',
             'password' => 'required|min:6',
             'nis' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255|unique:users,email',
             'role' => 'required|in:admin,petugas,peminjam',
         ]);
 
@@ -39,6 +40,7 @@ class UserController extends Controller
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'nis' => $request->nis,
+            'email' => $request->email,
             'role' => $request->role,
         ]);
         LogAktivitas::catat('Create', 'User', "Menambah user: {$user->nama}");
@@ -59,6 +61,7 @@ class UserController extends Controller
             'nama' => 'required|string|max:255',
             'username' => 'required|string|unique:users,username,' . $user->id . '|max:255',
             'nis' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255|unique:users,email,' . $user->id,
             'role' => 'required|in:admin,petugas,peminjam',
         ]);
 
@@ -66,6 +69,7 @@ class UserController extends Controller
             'nama' => $request->nama,
             'username' => $request->username,
             'nis' => $request->nis,
+            'email' => $request->email,
             'role' => $request->role,
         ];
 

@@ -231,6 +231,25 @@
             white-space: nowrap;
         }
 
+        .deadline-note {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .deadline-note-next-day {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .deadline-note-same-day {
+            background: #ecfccb;
+            color: #3f6212;
+        }
+
         .logout-btn {
             background: #ef4444;
             color: white;
@@ -267,11 +286,11 @@
 
             <div class="content-card">
                 <h2 class="section-title">Form Pengajuan</h2>
-                <p class="section-desc">Pilih kode unik unit yang ingin dipinjam. Peminjaman dibuka pukul 07:00 - 15:00 WIB.</p>
+                <p class="section-desc">Pilih alat yang ingin dipinjam. Pengajuan bisa dilakukan kapan saja.</p>
 
                 <div class="alert alert-error" style="margin-bottom: 15px;">
-                    <strong>Peringatan:</strong> Alat harus dikembalikan paling lambat pukul 15:00 WIB ke ruang PPLG.
-                    Terlambat dikenakan denda Rp 2.000. Jika terjadi kerusakan atau kehilangan, peminjam wajib bertanggung jawab kepada pihak sekolah.
+                    <strong>Peringatan:</strong> Alat harus dikembalikan paling lambat pukul 15:00 WIB ke ruang PPLG. Jika pengajuan dibuat setelah pukul 15:00 WIB, batas kembali akan dihitung untuk pukul 15:00 WIB hari berikutnya.
+                    Terlambat dikenakan denda Rp 2.000 setiap kali melewati batas pukul 15:00 WIB. Jika pengembalian masih lewat jam 15:00 WIB di hari berikutnya, denda menjadi dua kali lipat, lalu terus bertambah per hari. Jika terjadi kerusakan atau kehilangan, peminjam wajib bertanggung jawab kepada pihak sekolah.
                 </div>
 
                 @if(session('success'))
@@ -293,7 +312,7 @@
                         <div class="item-rows" id="item-rows">
                             <div class="item-row" data-index="0">
                                 <select name="items[0][alat_unit_id]" required>
-                                    <option value="">Pilih Kode Unik</option>
+                                    <option value="">Pilih Alat </option>
                                     @forelse($alatUnits as $unit)
                                     @php
                                         $label = ($unit->alat->nama_alat ?? '-') . ' - ' . $unit->kode_unik;
@@ -306,7 +325,7 @@
                                 <button type="button" class="remove-row" style="display:none;">✕</button>
                             </div>
                         </div>
-                        <button type="button" id="add-row" class="btn-secondary">Tambah Kode</button>
+                        <button type="button" id="add-row" class="btn-secondary">Tambah Alat</button>
                     </div>
 
                     <div style="margin-top: 15px;">
@@ -336,6 +355,16 @@
                                     Jam: {{ optional($row->waktu_pinjam)->format('H:i') ?? '-' }} WIB
                                 </div>
                                 <div>Batas: {{ optional($row->batas_kembali)->format('d/m/Y H:i') ?? '-' }} WIB</div>
+                                @php
+                                    $isNextDayDeadline = $row->batas_kembali && $row->tanggal_pinjam
+                                        ? $row->batas_kembali->toDateString() !== $row->tanggal_pinjam->toDateString()
+                                        : false;
+                                @endphp
+                                @if($row->batas_kembali)
+                                    <div class="deadline-note {{ $isNextDayDeadline ? 'deadline-note-next-day' : 'deadline-note-same-day' }}">
+                                        {{ $isNextDayDeadline ? 'Batas kembali besok jam 15:00 WIB' : 'Batas kembali hari ini jam 15:00 WIB' }}
+                                    </div>
+                                @endif
                                 <div>Kembali: {{ optional($row->tanggal_kembali)->format('d/m/Y') ?? '-' }}</div>
                             </td>
                             <td>

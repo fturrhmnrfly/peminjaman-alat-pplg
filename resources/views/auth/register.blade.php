@@ -183,6 +183,35 @@
             gap: 12px;
         }
 
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-wrapper input {
+            width: 100%;
+            padding-right: 82px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            color: #374151;
+            padding: 7px 10px;
+            transition: 0.2s;
+        }
+
+        .toggle-password:hover {
+            background: #e5e7eb;
+        }
+
         @media (max-width: 768px) {
             .register-container {
                 flex-direction: column;
@@ -208,60 +237,26 @@
                 font-size: 60px;
             }
         }
-
-        .password-input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .password-input-wrapper input {
-            width: 100%;
-            padding-right: 45px;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 12px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            padding: 5px 8px;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-        }
-
-        .toggle-password:hover {
-            transform: scale(1.1);
-        }
-
-        .toggle-password:active {
-            transform: scale(0.95);
-        }
     </style>
 </head>
 <body>
-    <a href="/" class="back-link">← Kembali</a>
+    <a href="/" class="back-link">&lt; Kembali</a>
 
     <div class="register-wrapper">
         <div class="register-container">
-            <!-- ILLUSTRATION SIDE -->
             <div class="register-illustration">
                 <div class="register-icon">📝</div>
-                <h2>{{ config('', 'Peminjaman PPLG') }}</h2>
+                <h2>{{ config('app.name', 'Peminjaman PPLG') }}</h2>
                 <p>Daftar sebagai peminjam dan nikmati kemudahan peminjaman alat secara digital</p>
             </div>
 
-            <!-- FORM SIDE -->
             <div class="register-form">
                 <h1>Daftar Akun Baru</h1>
-                <p>Isi data di bawah untuk membuat akun peminjam</p>
+                <p>Isi data di bawah untuk membuat akun peminjam. Setelah itu kode verifikasi akan dikirim ke email kamu.</p>
 
                 @if ($errors->any())
                     <div class="error-message">
-                        Terjadi kesalahan, silakan periksa kembali
+                        Terjadi kesalahan, silakan periksa kembali data pendaftaran.
                     </div>
                 @endif
 
@@ -270,14 +265,7 @@
 
                     <div class="form-group">
                         <label for="nama">Nama Lengkap</label>
-                        <input 
-                            type="text" 
-                            id="nama" 
-                            name="nama" 
-                            value="{{ old('nama') }}"
-                            placeholder="Masukkan nama lengkap"
-                            required
-                        >
+                        <input type="text" id="nama" name="nama" value="{{ old('nama') }}" placeholder="Masukkan nama lengkap" required>
                         @error('nama')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
@@ -285,14 +273,7 @@
 
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <input 
-                            type="text" 
-                            id="username" 
-                            name="username" 
-                            value="{{ old('username') }}"
-                            placeholder="Buat username unik"
-                            required
-                        >
+                        <input type="text" id="username" name="username" value="{{ old('username') }}" placeholder="Buat username unik" required>
                         @error('username')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
@@ -300,15 +281,16 @@
 
                     <div class="form-group">
                         <label for="nis">NIS (Nomor Induk Siswa)</label>
-                        <input 
-                            type="text" 
-                            id="nis" 
-                            name="nis" 
-                            value="{{ old('nis') }}"
-                            placeholder="Masukkan NIS Anda"
-                            required
-                        >
+                        <input type="text" id="nis" name="nis" value="{{ old('nis') }}" placeholder="Masukkan NIS Anda" required>
                         @error('nis')
+                            <span class="form-error">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="Masukkan email aktif" required>
+                        @error('email')
                             <span class="form-error">{{ $message }}</span>
                         @enderror
                     </div>
@@ -316,16 +298,8 @@
                     <div class="form-group">
                         <label for="password">Password</label>
                         <div class="password-input-wrapper">
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                placeholder="Minimal 8 karakter"
-                                required
-                            >
-                            <button type="button" class="toggle-password" onclick="togglePassword('password')">
-                                👁️
-                            </button>
+                            <input type="password" id="password" name="password" placeholder="Minimal 8 karakter" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('password', this)">Lihat</button>
                         </div>
                         @error('password')
                             <span class="form-error">{{ $message }}</span>
@@ -335,20 +309,12 @@
                     <div class="form-group">
                         <label for="password_confirmation">Konfirmasi Password</label>
                         <div class="password-input-wrapper">
-                            <input 
-                                type="password" 
-                                id="password_confirmation" 
-                                name="password_confirmation" 
-                                placeholder="Ulangi password"
-                                required
-                            >
-                            <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation')">
-                                👁️
-                            </button>
+                            <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Ulangi password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation', this)">Lihat</button>
                         </div>
                     </div>
 
-                    <button type="submit" class="register-button">Daftar Sekarang</button>
+                    <button type="submit" class="register-button">Daftar dan Kirim Kode Verifikasi</button>
                 </form>
 
                 <div class="login-link">
@@ -359,16 +325,15 @@
     </div>
 
     <script>
-        function togglePassword(fieldId) {
+        function togglePassword(fieldId, button) {
             const field = document.getElementById(fieldId);
-            const button = event.target.closest('.toggle-password');
-            
+
             if (field.type === 'password') {
                 field.type = 'text';
-                button.textContent = '🙈';
+                button.textContent = 'Sembunyi';
             } else {
                 field.type = 'password';
-                button.textContent = '👁️';
+                button.textContent = 'Lihat';
             }
         }
     </script>

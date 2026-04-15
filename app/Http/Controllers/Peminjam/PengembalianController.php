@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class PengembalianController extends Controller
 {
@@ -19,8 +20,17 @@ class PengembalianController extends Controller
             ->orderBy('tanggal_pinjam', 'desc')
             ->get();
 
+        $riwayatPengembalian = Peminjaman::with(['detailPeminjamans.alatUnit.alat', 'detailPeminjamans.alat'])
+            ->where('user_id', auth()->id())
+            ->whereIn('status', ['pengembalian_pending', 'dikembalikan'])
+            ->orderByDesc('waktu_pengajuan_pengembalian')
+            ->orderByDesc('waktu_pengembalian')
+            ->orderByDesc('tanggal_pinjam')
+            ->get();
+
         return view('peminjam.pengembalian.index', [
             'peminjaman' => $peminjaman,
+            'riwayatPengembalian' => $riwayatPengembalian,
         ]);
     }
 
@@ -43,8 +53,12 @@ class PengembalianController extends Controller
                 return ['ok' => false, 'message' => 'Peminjaman ini belum dapat dikembalikan.'];
             }
 
+            $waktuPengajuan = Carbon::now('Asia/Jakarta');
+
             $peminjaman->update([
                 'status' => 'pengembalian_pending',
+                'waktu_pengajuan_pengembalian' => $waktuPengajuan,
+                'denda' => $peminjaman->hitungDendaOtomatis($waktuPengajuan),
             ]);
 
             LogAktivitas::catat(
