@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruang Alat</title>
+    <title>Memantau Pengembalian</title>
     @vite(['resources/css/petugas-sidebar.css', 'resources/js/app.js'])
 
     <style>
@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: var(--petugas-page-bg);
+            background: #f5f7fb;
         }
 
         body.modal-open {
@@ -55,8 +55,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--petugas-avatar-start), var(--petugas-avatar-end));
-            color: var(--petugas-avatar-text);
+            background: linear-gradient(135deg, #facc15, #fde68a);
+            color: #1e3a8a;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -68,6 +68,12 @@
             padding: 28px;
             border-radius: 22px;
             box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
         }
 
         .section-title {
@@ -200,7 +206,7 @@
         }
 
         .btn-primary {
-            background: var(--petugas-accent);
+            background: #0f766e;
             color: white;
             border: none;
             padding: 10px 14px;
@@ -216,7 +222,7 @@
             flex-direction: column;
             align-items: flex-start;
             justify-content: center;
-            background: var(--petugas-accent);
+            background: #0f766e;
             color: white;
             border: none;
             border-radius: 12px;
@@ -274,7 +280,7 @@
         }
 
         .inspection-dialog {
-            width: min(760px, 100%);
+            width: min(860px, 100%);
             max-height: min(86vh, 860px);
             overflow: auto;
             background: #ffffff;
@@ -334,6 +340,12 @@
             background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
         }
 
+        .return-confirm-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
         .inspection-list {
             display: flex;
             flex-direction: column;
@@ -347,50 +359,12 @@
             padding: 16px;
             background: linear-gradient(180deg, #fbfdff 0%, #f8fafc 100%);
             box-shadow: 0 10px 20px rgba(148, 163, 184, 0.08);
-        }
-
-        .inspection-item-head {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            margin-bottom: 14px;
-        }
-
-        .inspection-item-media {
-            width: 78px;
-            height: 78px;
-            border-radius: 16px;
             overflow: hidden;
-            background: #e5e7eb;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.12);
-        }
-
-        .inspection-item-media img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .inspection-item-placeholder {
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: #64748b;
-        }
-
-        .inspection-item-copy {
-            min-width: 0;
-            flex: 1;
         }
 
         .inspection-title {
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px;
             color: #111827;
             margin-bottom: 4px;
         }
@@ -398,20 +372,29 @@
         .inspection-meta {
             color: #6b7280;
             font-size: 12px;
-            line-height: 1.55;
+            margin-bottom: 14px;
         }
 
-        .inspection-code {
+        .inspection-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .inspection-item-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 5px 10px;
+            justify-content: center;
+            min-width: 82px;
+            padding: 6px 10px;
             border-radius: 999px;
-            background: #ecfeff;
-            color: var(--petugas-accent);
+            background: #ccfbf1;
+            color: #115e59;
             font-size: 11px;
             font-weight: 700;
-            margin-top: 8px;
+            white-space: nowrap;
         }
 
         .inspection-grid {
@@ -424,6 +407,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
+            min-width: 0;
         }
 
         .form-group label {
@@ -434,6 +418,7 @@
 
         .form-control {
             width: 100%;
+            max-width: 100%;
             padding: 10px 12px;
             border: 1px solid #d1d5db;
             border-radius: 12px;
@@ -442,9 +427,15 @@
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
+        select.form-control,
+        input.form-control,
+        textarea.form-control {
+            display: block;
+        }
+
         .form-control:focus {
             outline: none;
-            border-color: var(--petugas-accent-soft-2);
+            border-color: #14b8a6;
             box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
         }
 
@@ -462,13 +453,14 @@
         .form-hint {
             color: #6b7280;
             font-size: 12px;
-            margin-top: 14px;
-            margin-bottom: 14px;
             line-height: 1.5;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: #ecfeff;
+            border: 1px solid #bae6fd;
         }
 
         .payment-method-box {
-            margin-top: 12px;
             padding: 14px;
             border: 1px solid #dbe2ea;
             border-radius: 16px;
@@ -491,7 +483,18 @@
         }
 
         .payment-summary strong {
-            color: var(--petugas-accent);
+            color: #0f766e;
+        }
+
+        .inspection-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .inspection-actions .btn-primary {
+            width: auto;
+            min-width: 220px;
+            margin-top: 0;
         }
 
         .qris-modal-card {
@@ -529,7 +532,7 @@
             margin-bottom: 18px;
             font-size: 26px;
             font-weight: 800;
-            color: var(--petugas-accent);
+            color: #0f766e;
         }
 
         .dummy-qris {
@@ -691,14 +694,17 @@
                 grid-template-columns: 1fr;
             }
 
-            .inspection-item-head {
-                align-items: center;
+            .inspection-card-header {
+                flex-direction: column;
             }
 
-            .inspection-item-media {
-                width: 64px;
-                height: 64px;
-                border-radius: 14px;
+            .inspection-item-badge {
+                min-width: 0;
+            }
+
+            .inspection-actions .btn-primary {
+                width: 100%;
+                min-width: 0;
             }
         }
     </style>
@@ -715,10 +721,7 @@
                 <strong>Memantau Pengembalian</strong>
                 <div class="user-info">
                     <x-notification-bell />
-                    <div class="user-avatar">
-                        {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
-                    </div>
-                    <span>{{ auth()->user()->nama }}</span>
+                    <x-profile-shortcut />
                 </div>
             </div>
 
@@ -750,6 +753,7 @@
                 </div>
                 @endif
 
+                <div class="table-wrap">
                 <table class="table">
                     <thead>
                         <tr>
@@ -797,137 +801,14 @@
                                     <span style="color: #065f46; font-weight: 600;">Tidak ada</span>
                                 @endif
                             </td>
+                            @php
+                                $modalId = 'inspection-modal-' . $row->id;
+                            @endphp
                             <td>
-                                @php
-                                    $modalId = 'inspection-modal-' . $row->id;
-                                @endphp
                                 <button type="button" class="inspection-toggle" data-target="{{ $modalId }}" aria-expanded="false" aria-controls="{{ $modalId }}">
                                     Form Pemeriksaan
                                     <small>{{ $row->detailPeminjamans->count() }} barang</small>
                                 </button>
-
-                                <div id="{{ $modalId }}" class="inspection-modal" hidden>
-                                    <div class="inspection-dialog" role="dialog" aria-modal="true" aria-labelledby="inspection-title-{{ $row->id }}">
-                                        <div class="inspection-dialog-header">
-                                            <div>
-                                                <div id="inspection-title-{{ $row->id }}" class="inspection-dialog-title">Pemeriksaan Barang</div>
-                                                <div class="inspection-dialog-subtitle">
-                                                    {{ $row->user->nama ?? '-' }} | {{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }} | {{ $row->detailPeminjamans->count() }} barang
-                                                </div>
-                                            </div>
-                                            <button type="button" class="inspection-close" data-close-modal="{{ $modalId }}" aria-label="Tutup form pemeriksaan">x</button>
-                                        </div>
-
-                                        <div class="inspection-dialog-body">
-                                            <form method="POST" action="{{ route('petugas.pengembalian.konfirmasi', $row->id) }}" class="return-confirm-form" data-row-id="{{ $row->id }}" data-late-denda="{{ (int) ($row->denda ?? 0) }}" data-peminjam="{{ $row->user->nama ?? '-' }}">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="payment_confirmed" value="0" class="payment-confirmed-input">
-
-                                                <div class="inspection-list">
-                                                    @forelse($row->detailPeminjamans as $detail)
-                                                    <div class="inspection-card">
-                                                        @php
-                                                            $alatItem = $detail->alatUnit?->alat ?? $detail->alat;
-                                                            $fotoUrl = null;
-
-                                                            if ($alatItem?->foto) {
-                                                                $fotoValue = $alatItem->foto;
-                                                                $fotoPath = \Illuminate\Support\Str::startsWith($fotoValue, ['alat/', 'public/alat/'])
-                                                                    ? $fotoValue
-                                                                    : 'alat/' . $fotoValue;
-                                                                $fotoPath = \Illuminate\Support\Str::startsWith($fotoPath, 'public/')
-                                                                    ? \Illuminate\Support\Str::after($fotoPath, 'public/')
-                                                                    : $fotoPath;
-
-                                                                /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
-                                                                $publicDisk = \Illuminate\Support\Facades\Storage::disk('public');
-                                                                $fotoUrl = $publicDisk->url($fotoPath);
-                                                            }
-                                                        @endphp
-
-                                                        <div class="inspection-item-head">
-                                                            <div class="inspection-item-media">
-                                                                @if($fotoUrl)
-                                                                    <img src="{{ $fotoUrl }}" alt="{{ $alatItem?->nama_alat ?? 'Foto alat' }}">
-                                                                @else
-                                                                    <span class="inspection-item-placeholder">Foto</span>
-                                                                @endif
-                                                            </div>
-                                                            <div class="inspection-item-copy">
-                                                                <div class="inspection-title">
-                                                                    {{ $alatItem?->nama_alat ?? '-' }}
-                                                                </div>
-                                                                <div class="inspection-meta">
-                                                                    Pastikan kondisi alat sesuai saat dikembalikan sebelum konfirmasi disimpan.
-                                                                </div>
-                                                                <div class="inspection-code">
-                                                                    Kode unit: {{ $detail->alatUnit?->kode_unik ?? '-' }}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="inspection-grid">
-                                                            <div class="form-group">
-                                                                <label for="kondisi_{{ $detail->id }}">Kondisi Barang</label>
-                                                                <select id="kondisi_{{ $detail->id }}" name="items[{{ $detail->id }}][kondisi_pengembalian]" class="form-control" required>
-                                                                    <option value="baik" @selected(old("items.{$detail->id}.kondisi_pengembalian", $detail->kondisi_pengembalian ?? 'baik') === 'baik')>Baik</option>
-                                                                    <option value="rusak_ringan" @selected(old("items.{$detail->id}.kondisi_pengembalian", $detail->kondisi_pengembalian) === 'rusak_ringan')>Rusak Ringan</option>
-                                                                    <option value="rusak_berat" @selected(old("items.{$detail->id}.kondisi_pengembalian", $detail->kondisi_pengembalian) === 'rusak_berat')>Rusak Berat</option>
-                                                                    <option value="hilang" @selected(old("items.{$detail->id}.kondisi_pengembalian", $detail->kondisi_pengembalian) === 'hilang')>Hilang</option>
-                                                                </select>
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label for="denda_{{ $detail->id }}">Denda Kerusakan</label>
-                                                                <input
-                                                                    id="denda_{{ $detail->id }}"
-                                                                    type="number"
-                                                                    min="0"
-                                                                    step="1000"
-                                                                    name="items[{{ $detail->id }}][denda_kerusakan]"
-                                                                    class="form-control"
-                                                                    value="{{ old("items.{$detail->id}.denda_kerusakan", $detail->denda_kerusakan ?? 0) }}"
-                                                                    placeholder="Contoh: 50000"
-                                                                >
-                                                            </div>
-
-                                                            <div class="form-group form-group-span">
-                                                                <label for="detail_kerusakan_{{ $detail->id }}">Detail Kerusakan</label>
-                                                                <textarea
-                                                                    id="detail_kerusakan_{{ $detail->id }}"
-                                                                    name="items[{{ $detail->id }}][detail_kerusakan]"
-                                                                    class="form-control"
-                                                                    placeholder="Contoh: Tombol keyboard kiri tidak berfungsi, casing retak di sudut kanan."
-                                                                >{{ old("items.{$detail->id}.detail_kerusakan", $detail->detail_kerusakan) }}</textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    @empty
-                                                    <div style="color: #9ca3af;">Tidak ada detail alat</div>
-                                                    @endforelse
-                                                </div>
-                                                <div class="form-hint">
-                                                    Isi denda kerusakan dengan biaya service atau penggantian. Jika barang baik, isi `0`.
-                                                </div>
-                                                <div class="payment-method-box" hidden>
-                                                    <div class="form-group">
-                                                        <label for="metode_pembayaran_{{ $row->id }}">Metode Pembayaran</label>
-                                                        <select id="metode_pembayaran_{{ $row->id }}" name="metode_pembayaran" class="form-control payment-method-select">
-                                                            <option value="">Pilih metode pembayaran</option>
-                                                            <option value="tunai" @selected(old('metode_pembayaran', $row->metode_pembayaran) === 'tunai')>Tunai</option>
-                                                            <option value="qris_all_payment" @selected(old('metode_pembayaran', $row->metode_pembayaran) === 'qris_all_payment')>QRIS All Payment</option>
-                                                        </select>
-                                                        <div class="payment-summary">
-                                                            Total denda yang harus dibayar: <strong class="payment-total-label">Rp 0</strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button type="submit" class="btn-primary">Konfirmasi Pengembalian</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
                             </td>
                             <td>
                                 @php
@@ -951,13 +832,119 @@
                         @endforelse
                     </tbody>
                 </table>
+                </div>
             </div>
         </main>
     </div>
 
+    @foreach($peminjaman as $row)
+    @php
+        $modalId = 'inspection-modal-' . $row->id;
+    @endphp
+    <div id="{{ $modalId }}" class="inspection-modal" hidden>
+        <div class="inspection-dialog" role="dialog" aria-modal="true" aria-labelledby="inspection-title-{{ $row->id }}">
+            <div class="inspection-dialog-header">
+                <div>
+                    <div id="inspection-title-{{ $row->id }}" class="inspection-dialog-title">Pemeriksaan Barang</div>
+                    <div class="inspection-dialog-subtitle">
+                        {{ $row->user->nama ?? '-' }} | {{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }} | {{ $row->detailPeminjamans->count() }} barang
+                    </div>
+                </div>
+                <button type="button" class="inspection-close" data-close-modal="{{ $modalId }}" aria-label="Tutup form pemeriksaan">x</button>
+            </div>
+
+            <div class="inspection-dialog-body">
+                <form method="POST" action="{{ route('petugas.pengembalian.konfirmasi', $row->id) }}" class="return-confirm-form" data-row-id="{{ $row->id }}" data-late-denda="{{ (int) ($row->denda ?? 0) }}" data-peminjam="{{ $row->user->nama ?? '-' }}">
+                    @csrf
+                    @method('PATCH')
+                    <input type="hidden" name="payment_confirmed" value="0" class="payment-confirmed-input">
+
+                    <div class="inspection-list">
+                        @forelse($row->detailPeminjamans as $detail)
+                        <div class="inspection-card">
+                            <div class="inspection-card-header">
+                                <div>
+                                    <div class="inspection-title">
+                                        {{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}
+                                    </div>
+                                    <div class="inspection-meta">
+                                        Kode unit: {{ $detail->alatUnit?->kode_unik ?? '-' }}
+                                    </div>
+                                </div>
+                                <span class="inspection-item-badge">1 barang</span>
+                            </div>
+
+                            <div class="inspection-grid">
+                                <div class="form-group">
+                                    <label for="kondisi_{{ $detail->id }}">Kondisi Barang</label>
+                                    <select id="kondisi_{{ $detail->id }}" name="items[{{ $detail->id }}][kondisi_pengembalian]" class="form-control" required>
+                                        <option value="baik" @selected(old("items.{$detail->id}.kondisi_pengembalian", $detail->kondisi_pengembalian ?? 'baik') === 'baik')>Baik</option>
+                                        <option value="rusak_ringan" @selected(old("items.{$detail->id}.kondisi_pengembalian", $detail->kondisi_pengembalian) === 'rusak_ringan')>Rusak Ringan</option>
+                                        <option value="rusak_berat" @selected(old("items.{$detail->id}.kondisi_pengembalian", $detail->kondisi_pengembalian) === 'rusak_berat')>Rusak Berat</option>
+                                        <option value="hilang" @selected(old("items.{$detail->id}.kondisi_pengembalian", $detail->kondisi_pengembalian) === 'hilang')>Hilang</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="denda_{{ $detail->id }}">Denda Kerusakan</label>
+                                    <input
+                                        id="denda_{{ $detail->id }}"
+                                        type="number"
+                                        min="0"
+                                        step="1000"
+                                        name="items[{{ $detail->id }}][denda_kerusakan]"
+                                        class="form-control"
+                                        value="{{ old("items.{$detail->id}.denda_kerusakan", $detail->denda_kerusakan ?? 0) }}"
+                                        placeholder="Contoh: 50000"
+                                    >
+                                </div>
+
+                                <div class="form-group form-group-span">
+                                    <label for="detail_kerusakan_{{ $detail->id }}">Detail Kerusakan</label>
+                                    <textarea
+                                        id="detail_kerusakan_{{ $detail->id }}"
+                                        name="items[{{ $detail->id }}][detail_kerusakan]"
+                                        class="form-control"
+                                        placeholder="Contoh: Tombol keyboard kiri tidak berfungsi, casing retak di sudut kanan."
+                                    >{{ old("items.{$detail->id}.detail_kerusakan", $detail->detail_kerusakan) }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div style="color: #9ca3af;">Tidak ada detail alat</div>
+                        @endforelse
+                    </div>
+
+                    <div class="form-hint">
+                        Isi denda kerusakan dengan biaya service atau penggantian. Jika barang baik, isi `0`.
+                    </div>
+
+                    <div class="payment-method-box" hidden>
+                        <div class="form-group">
+                            <label for="metode_pembayaran_{{ $row->id }}">Metode Pembayaran</label>
+                            <select id="metode_pembayaran_{{ $row->id }}" name="metode_pembayaran" class="form-control payment-method-select">
+                                <option value="">Pilih metode pembayaran</option>
+                                <option value="tunai" @selected(old('metode_pembayaran', $row->metode_pembayaran) === 'tunai')>Tunai</option>
+                                <option value="qris_all_payment" @selected(old('metode_pembayaran', $row->metode_pembayaran) === 'qris_all_payment')>QRIS All Payment</option>
+                            </select>
+                            <div class="payment-summary">
+                                Total denda yang harus dibayar: <strong class="payment-total-label">Rp 0</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="inspection-actions">
+                        <button type="submit" class="btn-primary">Konfirmasi Pengembalian</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endforeach
+
     <div id="qris-payment-modal" class="inspection-modal" hidden>
         <div class="qris-modal-card" role="dialog" aria-modal="true" aria-labelledby="qris-modal-title">
-            <div id="qris-modal-title" class="qris-title">Pembayaran QRIS Dummy</div>
+            <div id="qris-modal-title" class="qris-title">Pembayaran QRIS</div>
             <div class="qris-desc">
                 Silakan lanjutkan simulasi pembayaran QRIS untuk menyelesaikan konfirmasi pengembalian.
             </div>
@@ -981,6 +968,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var activeQrisForm = null;
+            var isProcessingQris = false;
             var qrisModal = document.getElementById('qris-payment-modal');
             var qrisAmount = document.getElementById('qris-payment-amount');
             var qrisNote = document.getElementById('qris-payment-note');
@@ -1002,6 +990,10 @@
                 });
                 document.body.classList.remove('modal-open');
                 activeQrisForm = null;
+                isProcessingQris = false;
+                qrisConfirmButton.disabled = false;
+                qrisCancelButton.disabled = false;
+                qrisConfirmButton.textContent = 'Tandai Sudah Dibayar';
             }
 
             function calculateTotalDenda(form) {
@@ -1051,6 +1043,10 @@
                     qrisModal.classList.add('is-visible');
                 });
                 document.body.classList.add('modal-open');
+                isProcessingQris = false;
+                qrisConfirmButton.disabled = false;
+                qrisCancelButton.disabled = false;
+                qrisConfirmButton.textContent = 'Tandai Sudah Dibayar';
             }
 
             document.querySelectorAll('.inspection-toggle').forEach(function(button) {
@@ -1092,6 +1088,11 @@
                 }
 
                 form.addEventListener('submit', function(event) {
+                    if (form.dataset.submitting === '1') {
+                        event.preventDefault();
+                        return;
+                    }
+
                     var total = calculateTotalDenda(form);
                     var paymentMethod = select ? select.value : '';
 
@@ -1099,6 +1100,7 @@
                         if (confirmedInput) {
                             confirmedInput.value = '0';
                         }
+                        form.dataset.submitting = '1';
                         return;
                     }
 
@@ -1113,7 +1115,10 @@
                     if (paymentMethod === 'qris_all_payment' && confirmedInput && confirmedInput.value !== '1') {
                         event.preventDefault();
                         openQrisModal(form);
+                        return;
                     }
+
+                    form.dataset.submitting = '1';
                 });
             });
 
@@ -1124,15 +1129,26 @@
             });
 
             qrisConfirmButton.addEventListener('click', function() {
-                if (!activeQrisForm) {
+                if (!activeQrisForm || isProcessingQris) {
                     closeAllModals();
                     return;
                 }
 
                 var confirmedInput = activeQrisForm.querySelector('.payment-confirmed-input');
+                var submitButton = activeQrisForm.querySelector('button[type="submit"]');
 
                 if (confirmedInput) {
                     confirmedInput.value = '1';
+                }
+
+                isProcessingQris = true;
+                activeQrisForm.dataset.submitting = '1';
+                qrisConfirmButton.disabled = true;
+                qrisCancelButton.disabled = true;
+                qrisConfirmButton.textContent = 'Memproses...';
+
+                if (submitButton) {
+                    submitButton.disabled = true;
                 }
 
                 qrisModal.classList.remove('is-visible');
@@ -1168,4 +1184,3 @@
 </body>
 
 </html>
-
