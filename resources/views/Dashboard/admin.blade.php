@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin</title>
+    <title>Ruang Alat</title>
     @vite(['resources/css/admin-sidebar.css', 'resources/js/app.js'])
 
     <style>
@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #f5f7fb;
+            background: var(--admin-page-bg);
         }
 
         .layout {
@@ -52,8 +52,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #facc15, #fde68a);
-            color: #1e3a8a;
+            background: linear-gradient(135deg, var(--admin-avatar-start), var(--admin-avatar-end));
+            color: var(--admin-avatar-text);
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -71,7 +71,7 @@
         }
 
         .header span {
-            color: #1e40af;
+            color: var(--admin-accent);
             font-weight: 600;
         }
 
@@ -101,7 +101,7 @@
 
         .card:hover {
             transform: translateY(-6px);
-            border-left-color: #facc15;
+            border-left-color: var(--admin-accent-soft-2);
         }
 
         .card-icon {
@@ -135,7 +135,7 @@
         }
 
         .stat-box {
-            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            background: linear-gradient(135deg, var(--admin-stat-start), var(--admin-stat-end));
             color: white;
             padding: 18px;
             border-radius: 12px;
@@ -167,6 +167,30 @@
         .logout-btn:hover {
             background: #dc2626;
         }
+
+        @media (max-width: 900px) {
+            .main {
+                padding: 20px;
+            }
+
+            .topbar {
+                padding: 16px 18px;
+                gap: 14px;
+            }
+
+            .cards,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .topbar,
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
 
@@ -176,7 +200,7 @@
 
         <!-- SIDEBAR -->
         <aside class="sidebar">
-            <div class="sidebar-brand">📚 Peminjaman Alat</div>
+            <div class="sidebar-brand">📚 Ruang Alat</div>
 
             <nav class="sidebar-menu">
                     <a href="{{ route('dashboard') }}" class="active">🏠 Dashboard</a>
@@ -213,7 +237,7 @@
             <!-- HEADER -->
             <div class="header">
                 <h1>Halo, <span>{{ auth()->user()->nama }}</span> 👋</h1>
-                <p>Kelola sistem peminjaman alat dengan mudah dan rapi</p>
+                <p>Kelola sistem Ruang Alat dengan mudah dan rapi</p>
             </div>
 
             <!-- CARDS -->  
@@ -245,7 +269,7 @@
                 <a href="{{ route('admin.peminjaman.index') }}" class="card">
                     <div class="card-icon">📦</div>
                     <h3>Data Peminjaman</h3>
-                    <p>Lihat data peminjaman alat pembelajaran</p>
+                    <p>Lihat data Ruang Alat pembelajaran</p>
                 </a>
             </div>
 
@@ -278,3 +302,4 @@
 </body>
 
 </html>
+

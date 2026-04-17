@@ -35,4 +35,18 @@ class AlatController extends Controller
             'selectedKategori' => $request->kategori_id,
         ]);
     }
+
+    public function show(Alat $alat)
+    {
+        $alat->load([
+            'kategori',
+            'units' => function ($query) {
+                $query->orderBy('kode_unik');
+            },
+        ]);
+
+        return view('peminjam.alat.show', [
+            'alat' => $alat,
+        ]);
+    }
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Kategori</title>
+    <title>Ruang Alat</title>
     @vite(['resources/css/admin-sidebar.css', 'resources/js/app.js'])
 
     <style>
@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #f5f7fb;
+            background: var(--admin-page-bg);
         }
 
         .layout {
@@ -51,8 +51,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #facc15, #fde68a);
-            color: #1e3a8a;
+            background: linear-gradient(135deg, var(--admin-avatar-start), var(--admin-avatar-end));
+            color: var(--admin-avatar-text);
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -90,12 +90,12 @@
         }
 
         .btn-primary {
-            background: #1e40af;
+            background: var(--admin-accent);
             color: white;
         }
 
         .btn-primary:hover {
-            background: #1e3a8a;
+            background: var(--admin-accent-strong);
         }
 
         .btn-success {
@@ -256,8 +256,10 @@
                             <td>
                                 <div class="action-buttons">
                                     <a href="{{ route('admin.kategori.edit', $kategori->id) }}" class="btn btn-success">Edit</a>
-                                    <form action="{{ route('admin.kategori.destroy', $kategori->id) }}" method="POST" 
-                                          onsubmit="return confirm('Yakin ingin menghapus kategori ini?')">
+                                        <form action="{{ route('admin.kategori.destroy', $kategori->id) }}" method="POST"
+                                          data-confirm-title="Hapus Kategori?"
+                                          data-confirm-message="Yakin ingin menghapus kategori ini?"
+                                          data-confirm-button="Ya, hapus">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger">Hapus</button>
@@ -288,3 +290,4 @@
 </body>
 
 </html>
+

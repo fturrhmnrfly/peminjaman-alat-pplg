@@ -48,6 +48,12 @@ class PeminjamanController extends Controller
                     $query->where('status', 'tersedia');
                 }),
             ],
+        ], [
+            'items.required' => 'Pilih minimal 1 alat.',
+            'items.min' => 'Pilih minimal 1 alat.',
+            'items.*.alat_unit_id.required' => 'Pilih alat terlebih dahulu.',
+            'items.*.alat_unit_id.distinct' => 'Alat yang sama dipilih lebih dari sekali.',
+            'items.*.alat_unit_id.exists' => 'Alat tidak tersedia.',
         ]);
 
         $peminjamanId = null;

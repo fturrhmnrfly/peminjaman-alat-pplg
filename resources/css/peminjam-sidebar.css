@@ -1,3 +1,21 @@
+ :root {
+    --peminjam-page-bg: #f5f7f4;
+    --peminjam-sidebar-start: #5e7662;
+    --peminjam-sidebar-end: #78907b;
+    --peminjam-sidebar-text: #ebf1ea;
+    --peminjam-sidebar-active-bg: rgba(255, 255, 255, 0.15);
+    --peminjam-sidebar-active-text: #f8fbf8;
+    --peminjam-accent: #6d876f;
+    --peminjam-accent-strong: #57705a;
+    --peminjam-accent-soft: #e2ebe1;
+    --peminjam-accent-soft-2: #ccd9cb;
+    --peminjam-avatar-start: #dfe8dd;
+    --peminjam-avatar-end: #cad7c8;
+    --peminjam-avatar-text: #456048;
+    --peminjam-stat-start: #6d876f;
+    --peminjam-stat-end: #94aa95;
+ }
+
 /* ===== SIDEBAR ===== */
 .sidebar {
     position: fixed;
@@ -5,7 +23,7 @@
     top: 0;
     width: 260px;
     height: 100vh;
-    background: linear-gradient(180deg, #0f766e, #0d9488);
+    background: linear-gradient(180deg, var(--peminjam-sidebar-start), var(--peminjam-sidebar-end));
     color: white;
     padding: 25px 20px;
     display: flex;
@@ -32,7 +50,7 @@
 
 .sidebar-menu a {
     text-decoration: none;
-    color: #d1fae5;
+    color: var(--peminjam-sidebar-text);
     padding: 12px 15px;
     border-radius: 10px;
     transition: 0.3s;
@@ -44,8 +62,8 @@
 
 .sidebar-menu a:hover,
 .sidebar-menu a.active {
-    background: rgba(16, 185, 129, 0.2);
-    color: #a7f3d0;
+    background: var(--peminjam-sidebar-active-bg);
+    color: var(--peminjam-sidebar-active-text);
 }
 
 .sidebar-footer {

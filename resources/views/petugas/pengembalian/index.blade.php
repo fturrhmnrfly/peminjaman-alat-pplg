@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memantau Pengembalian</title>
+    <title>Ruang Alat</title>
     @vite(['resources/css/petugas-sidebar.css', 'resources/js/app.js'])
 
     <style>
@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #f5f7fb;
+            background: var(--petugas-page-bg);
         }
 
         body.modal-open {
@@ -55,8 +55,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #facc15, #fde68a);
-            color: #1e3a8a;
+            background: linear-gradient(135deg, var(--petugas-avatar-start), var(--petugas-avatar-end));
+            color: var(--petugas-avatar-text);
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -200,7 +200,7 @@
         }
 
         .btn-primary {
-            background: #0f766e;
+            background: var(--petugas-accent);
             color: white;
             border: none;
             padding: 10px 14px;
@@ -216,7 +216,7 @@
             flex-direction: column;
             align-items: flex-start;
             justify-content: center;
-            background: #0f766e;
+            background: var(--petugas-accent);
             color: white;
             border: none;
             border-radius: 12px;
@@ -349,9 +349,48 @@
             box-shadow: 0 10px 20px rgba(148, 163, 184, 0.08);
         }
 
+        .inspection-item-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .inspection-item-media {
+            width: 78px;
+            height: 78px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #e5e7eb;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.12);
+        }
+
+        .inspection-item-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .inspection-item-placeholder {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+
+        .inspection-item-copy {
+            min-width: 0;
+            flex: 1;
+        }
+
         .inspection-title {
             font-weight: 700;
-            font-size: 15px;
+            font-size: 16px;
             color: #111827;
             margin-bottom: 4px;
         }
@@ -359,7 +398,20 @@
         .inspection-meta {
             color: #6b7280;
             font-size: 12px;
-            margin-bottom: 14px;
+            line-height: 1.55;
+        }
+
+        .inspection-code {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: #ecfeff;
+            color: var(--petugas-accent);
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 8px;
         }
 
         .inspection-grid {
@@ -392,7 +444,7 @@
 
         .form-control:focus {
             outline: none;
-            border-color: #14b8a6;
+            border-color: var(--petugas-accent-soft-2);
             box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
         }
 
@@ -439,7 +491,7 @@
         }
 
         .payment-summary strong {
-            color: #0f766e;
+            color: var(--petugas-accent);
         }
 
         .qris-modal-card {
@@ -477,7 +529,7 @@
             margin-bottom: 18px;
             font-size: 26px;
             font-weight: 800;
-            color: #0f766e;
+            color: var(--petugas-accent);
         }
 
         .dummy-qris {
@@ -638,6 +690,16 @@
             .inspection-grid {
                 grid-template-columns: 1fr;
             }
+
+            .inspection-item-head {
+                align-items: center;
+            }
+
+            .inspection-item-media {
+                width: 64px;
+                height: 64px;
+                border-radius: 14px;
+            }
         }
     </style>
 </head>
@@ -765,11 +827,44 @@
                                                 <div class="inspection-list">
                                                     @forelse($row->detailPeminjamans as $detail)
                                                     <div class="inspection-card">
-                                                        <div class="inspection-title">
-                                                            {{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}
-                                                        </div>
-                                                        <div class="inspection-meta">
-                                                            Kode unit: {{ $detail->alatUnit?->kode_unik ?? '-' }}
+                                                        @php
+                                                            $alatItem = $detail->alatUnit?->alat ?? $detail->alat;
+                                                            $fotoUrl = null;
+
+                                                            if ($alatItem?->foto) {
+                                                                $fotoValue = $alatItem->foto;
+                                                                $fotoPath = \Illuminate\Support\Str::startsWith($fotoValue, ['alat/', 'public/alat/'])
+                                                                    ? $fotoValue
+                                                                    : 'alat/' . $fotoValue;
+                                                                $fotoPath = \Illuminate\Support\Str::startsWith($fotoPath, 'public/')
+                                                                    ? \Illuminate\Support\Str::after($fotoPath, 'public/')
+                                                                    : $fotoPath;
+
+                                                                /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
+                                                                $publicDisk = \Illuminate\Support\Facades\Storage::disk('public');
+                                                                $fotoUrl = $publicDisk->url($fotoPath);
+                                                            }
+                                                        @endphp
+
+                                                        <div class="inspection-item-head">
+                                                            <div class="inspection-item-media">
+                                                                @if($fotoUrl)
+                                                                    <img src="{{ $fotoUrl }}" alt="{{ $alatItem?->nama_alat ?? 'Foto alat' }}">
+                                                                @else
+                                                                    <span class="inspection-item-placeholder">Foto</span>
+                                                                @endif
+                                                            </div>
+                                                            <div class="inspection-item-copy">
+                                                                <div class="inspection-title">
+                                                                    {{ $alatItem?->nama_alat ?? '-' }}
+                                                                </div>
+                                                                <div class="inspection-meta">
+                                                                    Pastikan kondisi alat sesuai saat dikembalikan sebelum konfirmasi disimpan.
+                                                                </div>
+                                                                <div class="inspection-code">
+                                                                    Kode unit: {{ $detail->alatUnit?->kode_unik ?? '-' }}
+                                                                </div>
+                                                            </div>
                                                         </div>
 
                                                         <div class="inspection-grid">
@@ -1073,3 +1168,4 @@
 </body>
 
 </html>
+

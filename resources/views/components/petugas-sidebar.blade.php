@@ -1,5 +1,5 @@
 <aside class="sidebar">
-    <div class="sidebar-brand">📚 Peminjaman Alat</div>
+    <div class="sidebar-brand">📚 Ruang Alat</div>
 
     <nav class="sidebar-menu">
         <a href="{{ route('dashboard') }}" @class(['active' => request()->routeIs('dashboard')])>🏠 Dashboard</a>
@@ -14,6 +14,6 @@
     </form>
 
     <div class="sidebar-footer">
-        © {{ date('Y') }} Peminjaman Alat PPLG
+        © {{ date('Y') }} Ruang Alat
     </div>
 </aside>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifikasi</title>
+    <title>Ruang Alat</title>
     @php
         $role = auth()->user()->role ?? '';
         $sidebarCss = 'resources/css/admin-sidebar.css';
@@ -51,6 +51,22 @@
             padding: 25px;
             border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .content-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .content-head-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .user-info {
@@ -114,15 +130,22 @@
 
         .notif-actions {
             margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 6px 10px;
+            padding: 8px 12px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 12px;
             font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-primary {
@@ -130,11 +153,44 @@
             color: white;
         }
 
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-soft {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .inline-form {
+            display: inline-flex;
+        }
+
         .pagination {
             display: flex;
             justify-content: center;
             gap: 5px;
             margin-top: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .main {
+                padding: 18px;
+            }
+
+            .content-card {
+                padding: 18px;
+            }
+
+            .topbar {
+                padding: 16px 18px;
+            }
+
+            .content-head {
+                align-items: stretch;
+            }
         }
     </style>
 </head>
@@ -166,21 +222,48 @@
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
 
+                <div class="content-head">
+                    <strong>Semua Notifikasi</strong>
+                    <div class="content-head-actions">
+                        <form method="POST" action="{{ route('notifications.read-all') }}" class="inline-form">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn btn-soft">Tandai Semua Sudah Dibaca</button>
+                        </form>
+                        <form method="POST" action="{{ route('notifications.destroy-all') }}" class="inline-form"
+                            data-confirm-title="Hapus Semua Notifikasi?"
+                            data-confirm-message="Semua notifikasi akan dihapus."
+                            data-confirm-button="Ya, hapus semua">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Hapus Semua</button>
+                        </form>
+                    </div>
+                </div>
+
                 <div class="notif-list">
                     @forelse($notifications as $notif)
                         <div class="notif-item {{ $notif->is_read ? '' : 'unread' }}">
                             <div class="notif-title">{{ $notif->title }}</div>
                             <div class="notif-meta">{{ optional($notif->created_at)->format('d/m/Y H:i') ?? '-' }} WIB</div>
                             <div>{{ $notif->message }}</div>
-                            @if(! $notif->is_read)
-                                <div class="notif-actions">
-                                    <form method="POST" action="{{ route('notifications.read', $notif->id) }}">
+                            <div class="notif-actions">
+                                @if(! $notif->is_read)
+                                    <form method="POST" action="{{ route('notifications.read', $notif->id) }}" class="inline-form">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" class="btn btn-primary">Tandai Dibaca</button>
                                     </form>
-                                </div>
-                            @endif
+                                @endif
+                                <form method="POST" action="{{ route('notifications.destroy', $notif->id) }}" class="inline-form"
+                                    data-confirm-title="Hapus Notifikasi?"
+                                    data-confirm-message="Hapus notifikasi ini?"
+                                    data-confirm-button="Ya, hapus">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">Hapus</button>
+                                </form>
+                            </div>
                         </div>
                     @empty
                         <div style="color: #9ca3af;">Belum ada notifikasi.</div>
@@ -196,3 +279,4 @@
 </body>
 
 </html>
+

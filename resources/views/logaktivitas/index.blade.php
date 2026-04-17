@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log Aktivitas - Admin</title>
+    <title>Ruang Alat</title>
     @vite(['resources/css/admin-sidebar.css', 'resources/js/app.js'])
 
     <style>
@@ -593,3 +593,4 @@
 </body>
 
 </html>
+

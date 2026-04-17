@@ -26,6 +26,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifikasi/{notification}/read', [NotificationController::class, 'markAsRead'])
         ->name('notifications.read');
+    Route::patch('/notifikasi/read-all', [NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.read-all');
+    Route::delete('/notifikasi', [NotificationController::class, 'destroyAll'])
+        ->name('notifications.destroy-all');
+    Route::delete('/notifikasi/{notification}', [NotificationController::class, 'destroy'])
+        ->name('notifications.destroy');
 });
 
 // Admin Routes
@@ -46,6 +52,7 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->group(function (
     Route::patch('/peminjaman/{peminjaman}/setujui', [VerifikasiPeminjamanController::class, 'setujui'])->name('peminjaman.setujui');
     Route::patch('/peminjaman/{peminjaman}/tolak', [VerifikasiPeminjamanController::class, 'tolak'])->name('peminjaman.tolak');
     Route::get('/laporan', [PetugasLaporanController::class, 'index'])->name('petugas.laporan');
+    Route::get('/laporan/export-pdf', [PetugasLaporanController::class, 'exportPdf'])->name('petugas.laporan.export-pdf');
     Route::get('/pengembalian', [PetugasPengembalianController::class, 'index'])->name('petugas.pengembalian');
     Route::patch('/pengembalian/{peminjaman}/konfirmasi', [PetugasPengembalianController::class, 'konfirmasi'])
         ->name('petugas.pengembalian.konfirmasi');
@@ -54,6 +61,7 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->group(function (
 // Peminjam Routes
 Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->group(function () {
     Route::get('alat', [PeminjamAlatController::class, 'index'])->name('peminjam.alat.index');
+    Route::get('alat/{alat}', [PeminjamAlatController::class, 'show'])->name('peminjam.alat.show');
     Route::resource('peminjaman', PeminjamanController::class)->only(['index', 'store']);
     Route::get('pengembalian', [PeminjamPengembalianController::class, 'index'])->name('peminjam.pengembalian.index');
     Route::patch('pengembalian/{peminjaman}', [PeminjamPengembalianController::class, 'update'])

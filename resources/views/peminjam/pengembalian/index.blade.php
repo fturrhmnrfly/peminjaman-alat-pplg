@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengembalian Alat</title>
+    <title>Ruang Alat</title>
     @vite(['resources/css/peminjam-sidebar.css', 'resources/js/app.js'])
 
     <style>
@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #f5f7fb;
+            background: var(--peminjam-page-bg);
         }
 
         .layout {
@@ -50,8 +50,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #34d399, #a7f3d0);
-            color: #065f46;
+            background: linear-gradient(135deg, var(--peminjam-avatar-start), var(--peminjam-avatar-end));
+            color: var(--peminjam-avatar-text);
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -84,8 +84,8 @@
 
         .alert-success {
             background: #d1fae5;
-            color: #065f46;
-            border-left: 4px solid #10b981;
+            color: var(--peminjam-accent-strong);
+            border-left: 4px solid var(--peminjam-accent-soft-2);
         }
 
         .alert-error {
@@ -138,7 +138,7 @@
         }
 
         .btn-primary {
-            background: #0f766e;
+            background: var(--peminjam-accent);
             color: white;
             border: none;
             padding: 8px 12px;
@@ -162,7 +162,7 @@
 
         .badge-selesai {
             background: #d1fae5;
-            color: #065f46;
+            color: var(--peminjam-accent-strong);
         }
 
         .divider {
@@ -189,7 +189,7 @@
     </style>
 </head>
 
-<body>
+<body data-swal-title="Peringatan">
     <div class="layout">
         <x-peminjam-sidebar></x-peminjam-sidebar>
 
@@ -208,9 +208,9 @@
             <div class="content-card">
                 <h2 class="section-title">Daftar Alat Yang Sedang Dipinjam</h2>
                 <p class="section-desc">Ajukan pengembalian untuk peminjaman yang sudah disetujui.</p>
-                <div class="alert alert-error" style="margin-bottom: 15px;">
+                <div class="alert alert-error" data-swal-ignore="true" style="margin-bottom: 15px;">
                     <strong>Peringatan:</strong> Alat harus dikembalikan paling lambat pukul 15:00 WIB ke ruang PPLG.
-                    Terlambat dikenakan denda Rp 2.000 setiap kali melewati batas pukul 15:00 WIB. Jika besok lewat jam 15:00 WIB lagi, denda menjadi Rp 4.000, lalu terus bertambah untuk hari berikutnya. Jika terjadi kerusakan atau kehilangan, peminjam wajib bertanggung jawab kepada pihak sekolah.
+                    Terlambat dikenakan denda Rp 2.000 setiap kali melewati batas pukul 15:00 WIB. Jika terjadi kerusakan atau kehilangan, peminjam wajib bertanggung jawab kepada pihak sekolah.
                 </div>
 
                 @if(session('success'))

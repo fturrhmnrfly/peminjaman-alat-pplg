@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar - {{ config('app.name', 'Peminjaman PPLG') }}</title>
+    <title>Ruang Alat</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
     <style>
@@ -246,13 +246,13 @@
         <div class="register-container">
             <div class="register-illustration">
                 <div class="register-icon">📝</div>
-                <h2>{{ config('app.name', 'Peminjaman PPLG') }}</h2>
-                <p>Daftar sebagai peminjam dan nikmati kemudahan peminjaman alat secara digital</p>
+                <h2>{{ config('Ruang Alat', 'Ruang Alat') }}</h2>
+                <p>Daftar sebagai peminjam dan nikmati kemudahan Peminjaman Alat secara digital</p>
             </div>
 
             <div class="register-form">
                 <h1>Daftar Akun Baru</h1>
-                <p>Isi data di bawah untuk membuat akun peminjam. Setelah itu kode verifikasi akan dikirim ke email kamu.</p>
+                <p>Isi data di bawah untuk membuat akun.</p>
 
                 @if ($errors->any())
                     <div class="error-message">
@@ -314,7 +314,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="register-button">Daftar dan Kirim Kode Verifikasi</button>
+                    <button type="submit" class="register-button">Daftar</button>
                 </form>
 
                 <div class="login-link">
@@ -339,3 +339,4 @@
     </script>
 </body>
 </html>
+

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Peminjam</title>
+    <title>Ruang Alat</title>
     @vite(['resources/css/peminjam-sidebar.css', 'resources/js/app.js'])
 
     <style>
@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #f5f7fb;
+            background: var(--peminjam-page-bg);
         }
 
         .layout {
@@ -52,8 +52,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #34d399, #a7f3d0);
-            color: #065f46;
+            background: linear-gradient(135deg, var(--peminjam-avatar-start), var(--peminjam-avatar-end));
+            color: var(--peminjam-avatar-text);
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -71,7 +71,7 @@
         }
 
         .header span {
-            color: #0f766e;
+            color: var(--peminjam-accent);
             font-weight: 600;
         }
 
@@ -101,7 +101,7 @@
 
         .card:hover {
             transform: translateY(-6px);
-            border-left-color: #10b981;
+            border-left-color: var(--peminjam-accent-soft-2);
         }
 
         .card-icon {
@@ -135,7 +135,7 @@
         }
 
         .stat-box {
-            background: linear-gradient(135deg, #0f766e, #14b8a6);
+            background: linear-gradient(135deg, var(--peminjam-stat-start), var(--peminjam-stat-end));
             color: white;
             padding: 18px;
             border-radius: 12px;
@@ -167,13 +167,43 @@
         .logout-btn:hover {
             background: #dc2626;
         }
+
+        @media (max-width: 900px) {
+            .main {
+                padding: 20px;
+            }
+
+            .topbar {
+                padding: 16px 18px;
+                gap: 14px;
+            }
+
+            .cards,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .topbar,
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card,
+            .stats,
+            .stat-box {
+                border-radius: 14px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
     <div class="layout">
-        <x-peminjam-sidebar><</x-peminjam-sidebar>
+        <x-peminjam-sidebar></x-peminjam-sidebar>
 
         <!-- MAIN -->
         <main class="main">
@@ -193,7 +223,7 @@
             <!-- HEADER -->
             <div class="header">
                 <h1>Halo, <span>{{ auth()->user()->nama }}</span> 👋</h1>
-                <p>Ajukan peminjaman alat dan pantau statusnya dengan mudah</p>
+                <p>Ajukan permintaan di Ruang Alat dan pantau statusnya dengan mudah</p>
             </div>
 
             <!-- CARDS -->  
@@ -207,7 +237,7 @@
                 <a href="{{ route('peminjaman.index') }}" class="card">
                     <div class="card-icon">📝</div>
                     <h3>Ajukan Peminjaman</h3>
-                    <p>Buat pengajuan peminjaman alat pembelajaran</p>
+                    <p>Buat pengajuan alat pembelajaran di Ruang Alat</p>
                 </a>
 
                 <a href="{{ route('peminjam.pengembalian.index') }}" class="card">
@@ -246,3 +276,4 @@
 </body>
 
 </html>
+

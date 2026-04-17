@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - {{ config('app.name', 'Peminjaman PPLG') }}</title>
+    <title>Ruang Alat</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
     <style>
@@ -245,8 +245,8 @@
             <!-- ILLUSTRATION SIDE -->
             <div class="login-illustration">
                 <div class="login-icon">📚</div>
-                <h2>{{ config('', 'Peminjaman PPLG') }}</h2>
-                <p>Sistem peminjaman alat pembelajaran yang modern dan efisien untuk sekolah Anda</p>
+                <h2>{{ config('Ruang Alat', 'Ruang Alat') }}</h2>
+                <p>Sistem Peminjaman Alat yang modern dan efisien untuk sekolah Anda</p>
             </div>
 
             <!-- FORM SIDE -->
@@ -320,3 +320,4 @@
     </script>
 </body>
 </html>
+

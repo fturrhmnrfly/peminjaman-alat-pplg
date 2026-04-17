@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Petugas</title>
+    <title>Ruang Alat</title>
     @vite(['resources/css/petugas-sidebar.css', 'resources/js/app.js'])
 
     <style>
@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #f5f7fb;
+            background: var(--petugas-page-bg);
         }
 
         .layout {
@@ -52,8 +52,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #facc15, #fde68a);
-            color: #1e3a8a;
+            background: linear-gradient(135deg, var(--petugas-avatar-start), var(--petugas-avatar-end));
+            color: var(--petugas-avatar-text);
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -71,7 +71,7 @@
         }
 
         .header span {
-            color: #1e40af;
+            color: var(--petugas-accent);
             font-weight: 600;
         }
 
@@ -101,7 +101,7 @@
 
         .card:hover {
             transform: translateY(-6px);
-            border-left-color: #facc15;
+            border-left-color: var(--petugas-accent-soft-2);
         }
 
         .card-icon {
@@ -135,7 +135,7 @@
         }
 
         .stat-box {
-            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            background: linear-gradient(135deg, var(--petugas-stat-start), var(--petugas-stat-end));
             color: white;
             padding: 18px;
             border-radius: 12px;
@@ -166,6 +166,30 @@
 
         .logout-btn:hover {
             background: #dc2626;
+        }
+
+        @media (max-width: 900px) {
+            .main {
+                padding: 20px;
+            }
+
+            .topbar {
+                padding: 16px 18px;
+                gap: 14px;
+            }
+
+            .cards,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .topbar,
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -247,3 +271,4 @@
 </body>
 
 </html>
+

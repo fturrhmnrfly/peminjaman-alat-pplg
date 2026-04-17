@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User</title>
+    <title>Ruang Alat</title>
     @vite(['resources/css/admin-sidebar.css', 'resources/js/app.js'])
 
     <style>
@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #f5f7fb;
+            background: var(--admin-page-bg);
         }
 
         .layout {
@@ -51,8 +51,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #facc15, #fde68a);
-            color: #1e3a8a;
+            background: linear-gradient(135deg, var(--admin-avatar-start), var(--admin-avatar-end));
+            color: var(--admin-avatar-text);
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -105,7 +105,7 @@
 
         .form-control:focus {
             outline: none;
-            border-color: #1e40af;
+            border-color: var(--admin-accent);
             box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
         }
 
@@ -137,12 +137,12 @@
         }
 
         .btn-primary {
-            background: #1e40af;
+            background: var(--admin-accent);
             color: white;
         }
 
         .btn-primary:hover {
-            background: #1e3a8a;
+            background: var(--admin-accent-strong);
         }
 
         .btn-secondary {
@@ -286,3 +286,4 @@
 </body>
 
 </html>
+

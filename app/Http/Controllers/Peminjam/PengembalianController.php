@@ -48,9 +48,9 @@ class PengembalianController extends Controller
 
             if ($peminjaman->status !== 'disetujui') {
                 if ($peminjaman->status === 'pengembalian_pending') {
-                    return ['ok' => false, 'message' => 'Pengembalian sudah diajukan dan menunggu konfirmasi petugas.'];
+                    return ['ok' => false, 'message' => 'Pengembalian sudah diajukan.'];
                 }
-                return ['ok' => false, 'message' => 'Peminjaman ini belum dapat dikembalikan.'];
+                return ['ok' => false, 'message' => 'Belum bisa dikembalikan.'];
             }
 
             $waktuPengajuan = Carbon::now('Asia/Jakarta');
@@ -90,6 +90,6 @@ class PengembalianController extends Controller
             return back()->with('error', $result['message']);
         }
 
-        return back()->with('success', 'Pengembalian diajukan dan menunggu konfirmasi petugas.');
+        return back()->with('success', 'Pengembalian diajukan.');
     }
 }

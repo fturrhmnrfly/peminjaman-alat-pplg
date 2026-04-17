@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi Peminjaman</title>
+    <title>Ruang Alat</title>
     @vite(['resources/css/petugas-sidebar.css', 'resources/js/app.js'])
 
     <style>
@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #f5f7fb;
+            background: var(--petugas-page-bg);
         }
 
         .layout {
@@ -51,8 +51,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #facc15, #fde68a);
-            color: #1e3a8a;
+            background: linear-gradient(135deg, var(--petugas-avatar-start), var(--petugas-avatar-end));
+            color: var(--petugas-avatar-text);
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -352,3 +352,4 @@
 </body>
 
 </html>
+

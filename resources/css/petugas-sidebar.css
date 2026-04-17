@@ -1,5 +1,20 @@
  :root {
     --petugas-sidebar-width: 300px;
+    --petugas-page-bg: #f3f7f6;
+    --petugas-sidebar-start: #3f5f5b;
+    --petugas-sidebar-end: #587874;
+    --petugas-sidebar-text: #e7eeec;
+    --petugas-sidebar-active-bg: rgba(255, 255, 255, 0.14);
+    --petugas-sidebar-active-text: #f8fbfb;
+    --petugas-accent: #5b7c78;
+    --petugas-accent-strong: #456763;
+    --petugas-accent-soft: #d7e7e3;
+    --petugas-accent-soft-2: #bfd4cf;
+    --petugas-avatar-start: #dbe9e6;
+    --petugas-avatar-end: #c5d7d3;
+    --petugas-avatar-text: #355551;
+    --petugas-stat-start: #5b7c78;
+    --petugas-stat-end: #87a4a0;
  }
 
 /* ===== SIDEBAR ===== */
@@ -9,7 +24,7 @@
     top: 0;
     width: var(--petugas-sidebar-width);
     height: 100vh;
-    background: linear-gradient(180deg, #1e3a8a, #1e40af);
+    background: linear-gradient(180deg, var(--petugas-sidebar-start), var(--petugas-sidebar-end));
     color: white;
     padding: 24px 22px;
     display: flex;
@@ -36,7 +51,7 @@
 
 .sidebar-menu a {
     text-decoration: none;
-    color: #e5e7eb;
+    color: var(--petugas-sidebar-text);
     padding: 12px 14px;
     border-radius: 10px;
     transition: 0.3s;
@@ -50,8 +65,8 @@
 
 .sidebar-menu a:hover,
 .sidebar-menu a.active {
-    background: rgba(250, 204, 21, 0.15);
-    color: #fde68a;
+    background: var(--petugas-sidebar-active-bg);
+    color: var(--petugas-sidebar-active-text);
 }
 
 .sidebar-footer {

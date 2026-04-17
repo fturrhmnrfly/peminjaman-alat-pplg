@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Peminjaman PPLG') }} - Sistem Peminjaman Alat Modern</title>
+    <title>Ruang Alat</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
@@ -436,6 +436,11 @@
             padding-top: 60px;
         }
 
+        .comparison-wrap {
+            overflow-x: auto;
+            border-radius: 15px;
+        }
+
         .comparison-section h3 {
             font-size: 32px;
             font-weight: 800;
@@ -495,6 +500,126 @@
         .comparison-table tbody tr:hover td.check {
             background: rgba(209, 250, 229, 0.6);
         }
+
+        @media (max-width: 1024px) {
+            .navbar {
+                padding: 0 22px;
+            }
+
+            .hero,
+            .features {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+
+            .hero h1 {
+                font-size: 44px;
+            }
+
+            .features-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-container {
+                height: auto;
+                padding: 18px 0;
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            .navbar-links {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .hero {
+                padding-top: 64px;
+                padding-bottom: 64px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p,
+            .section-header p {
+                font-size: 16px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .hero-buttons .btn {
+                justify-content: center;
+            }
+
+            .stats {
+                gap: 16px;
+            }
+
+            .feature-banner,
+            .feature-banner-alt {
+                flex-direction: column;
+                text-align: left;
+                align-items: flex-start;
+                padding: 24px;
+            }
+
+            .feature-banner-icon {
+                font-size: 54px;
+                min-width: auto;
+            }
+
+            .section-header h2,
+            .comparison-section h3 {
+                font-size: 30px;
+            }
+
+            .comparison-table {
+                min-width: 720px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .navbar-brand {
+                font-size: 20px;
+            }
+
+            .navbar-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 20px;
+            }
+
+            .hero {
+                margin-top: 118px;
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            .hero-badge {
+                font-size: 12px;
+            }
+
+            .features {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .feature-number {
+                font-size: 38px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -503,7 +628,7 @@
         <div class="navbar-container">
             <a href="/" class="navbar-brand">
                 <span class="navbar-icon">📚</span>
-                {{ config('', 'Peminjaman PPLG') }}
+                {{ config('Ruang Alat', 'Ruang Alat') }}
             </a>
             
             <div class="navbar-links">
@@ -529,7 +654,7 @@
         <div class="hero-content">
             <div class="hero-badge">✨ Solusi Peminjaman Alat Terpercaya</div>
             <h1>Kelola Peminjaman Alat Dengan <span class="highlight">Lebih Mudah</span></h1>
-            <p>Sistem peminjaman alat sekolah yang modern, efisien, dan transparan. Proses lebih cepat, riwayat tercatat otomatis, dan monitoring real-time.</p>
+            <p>Sistem Peminjamanlogi Alat sekolah yang modern, efisien, dan transparan. Proses lebih cepat, riwayat tercatat otomatis, dan monitoring real-time.</p>
             
             <div class="hero-buttons">
                 @if (Route::has('login'))
@@ -569,7 +694,7 @@
     <section class="features" id="features">
         <div class="section-header">
             <h2>Fitur Unggulan</h2>
-            <p>Semua yang Anda butuhkan untuk mengelola peminjaman alat dengan efisien</p>
+            <p>Semua yang Anda butuhkan untuk mengelola Ruang Alat dengan efisien</p>
         </div>
 
         <div class="features-container">
@@ -665,13 +790,14 @@
         </div>
 
         <!-- COMPARISON TABLE -->
-        <div class="comparison-section">
+        <div class="comparison-section" id="benefits">
             <h3>Mengapa Kami Berbeda?</h3>
+            <div class="comparison-wrap">
             <table class="comparison-table">
                 <thead>
                     <tr>
                         <th>Fitur</th>
-                        <th class="highlight-col">Peminjaman PPLG</th>
+                        <th class="highlight-col">Ruang Alat</th>
                         <th>Sistem Manual</th>
                         <th>Aplikasi Lainnya</th>
                     </tr>
@@ -715,7 +841,9 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div>
     </section>
 </body>
 </html>
+

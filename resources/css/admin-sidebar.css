@@ -1,3 +1,21 @@
+ :root {
+    --admin-page-bg: #f3f6f8;
+    --admin-sidebar-start: #475569;
+    --admin-sidebar-end: #64748b;
+    --admin-sidebar-text: #e2e8f0;
+    --admin-sidebar-active-bg: rgba(255, 255, 255, 0.14);
+    --admin-sidebar-active-text: #f8fafc;
+    --admin-accent: #64748b;
+    --admin-accent-strong: #475569;
+    --admin-accent-soft: #e2e8f0;
+    --admin-accent-soft-2: #cbd5e1;
+    --admin-avatar-start: #e2e8f0;
+    --admin-avatar-end: #cbd5e1;
+    --admin-avatar-text: #334155;
+    --admin-stat-start: #64748b;
+    --admin-stat-end: #94a3b8;
+ }
+
 /* ===== SIDEBAR ===== */
 .sidebar {
     position: fixed;
@@ -5,7 +23,7 @@
     top: 0;
     width: 260px;
     height: 100vh;
-    background: linear-gradient(180deg, #1e3a8a, #1e40af);
+    background: linear-gradient(180deg, var(--admin-sidebar-start), var(--admin-sidebar-end));
     color: white;
     padding: 25px 20px;
     display: flex;
@@ -32,7 +50,7 @@
 
 .sidebar-menu a {
     text-decoration: none;
-    color: #e5e7eb;
+    color: var(--admin-sidebar-text);
     padding: 12px 15px;
     border-radius: 10px;
     transition: 0.3s;
@@ -44,8 +62,8 @@
 
 .sidebar-menu a:hover,
 .sidebar-menu a.active {
-    background: rgba(250, 204, 21, 0.15);
-    color: #fde68a;
+    background: var(--admin-sidebar-active-bg);
+    color: var(--admin-sidebar-active-text);
 }
 
 .sidebar-footer {
