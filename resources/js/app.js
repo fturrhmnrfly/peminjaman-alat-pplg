@@ -18,59 +18,86 @@ function injectSoftMotionStyles() {
     const style = document.createElement('style');
     style.id = motionStyleId;
     style.textContent = `
-        html {
+        html[data-motion-enabled="true"] {
             scroll-behavior: smooth;
         }
 
-        body {
-            animation: ruangAlatPageIn 560ms cubic-bezier(0.22, 1, 0.36, 1);
+        body[data-page-motion] {
+            --page-enter-duration: 320ms;
+            --page-reveal-duration: 280ms;
+            --page-reveal-distance: 12px;
+            --page-stagger: 32ms;
+            --page-hover-distance: -1px;
+            animation: ruangAlatPageIn var(--page-enter-duration) ease-out;
         }
 
-        .soft-reveal {
+        body[data-page-motion="dashboard"] {
+            --page-enter-duration: 260ms;
+            --page-reveal-duration: 240ms;
+            --page-reveal-distance: 10px;
+            --page-stagger: 26ms;
+        }
+
+        body[data-page-motion="catalog"] {
+            --page-enter-duration: 300ms;
+            --page-reveal-duration: 320ms;
+            --page-reveal-distance: 14px;
+            --page-stagger: 22ms;
+        }
+
+        body[data-page-motion="detail"] {
+            --page-enter-duration: 240ms;
+            --page-reveal-duration: 260ms;
+            --page-reveal-distance: 8px;
+            --page-stagger: 20ms;
+        }
+
+        body[data-page-motion="table"] {
+            --page-enter-duration: 220ms;
+            --page-reveal-duration: 220ms;
+            --page-reveal-distance: 6px;
+            --page-stagger: 16ms;
+            --page-hover-distance: 0;
+        }
+
+        body[data-page-motion] .soft-reveal {
             opacity: 0;
-            transform: translateY(18px);
-            animation: ruangAlatReveal 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            transform: translateY(var(--page-reveal-distance));
+            animation: ruangAlatReveal var(--page-reveal-duration) ease-out forwards;
             animation-delay: var(--reveal-delay, 0ms);
-            will-change: transform, opacity;
         }
 
-        a,
-        button,
-        input,
-        select,
-        textarea,
+        body[data-page-motion] a,
+        body[data-page-motion] button,
         .card,
         .product-card,
-        .content-card,
-        .topbar,
-        .notif-item,
-        .table tbody tr,
         .btn,
         .btn-primary,
         .btn-secondary,
         .btn-detail {
             transition:
-                transform 180ms ease,
-                box-shadow 220ms ease,
-                background-color 220ms ease,
-                border-color 220ms ease,
-                color 220ms ease,
-                opacity 220ms ease;
+                transform 160ms ease,
+                box-shadow 180ms ease,
+                background-color 180ms ease,
+                border-color 180ms ease,
+                color 180ms ease;
         }
 
-        a:hover,
-        button:hover,
+        body[data-page-motion] a:hover,
+        body[data-page-motion] button:hover,
         .card:hover,
         .product-card:hover,
-        .content-card:hover,
-        .notif-item:hover {
-            transform: translateY(-2px);
+        .btn:hover,
+        .btn-primary:hover,
+        .btn-secondary:hover,
+        .btn-detail:hover {
+            transform: translateY(var(--page-hover-distance));
         }
 
         @keyframes ruangAlatPageIn {
             from {
                 opacity: 0;
-                transform: translateY(8px);
+                transform: translateY(6px);
             }
             to {
                 opacity: 1;
@@ -120,26 +147,19 @@ function injectSoftMotionStyles() {
         }
 
         @media (prefers-reduced-motion: reduce) {
-            html {
+            html[data-motion-enabled="true"] {
                 scroll-behavior: auto;
             }
 
-            body,
-            .soft-reveal {
+            body[data-page-motion],
+            body[data-page-motion] .soft-reveal {
                 animation: none !important;
             }
 
-            a,
-            button,
-            input,
-            select,
-            textarea,
+            body[data-page-motion] a,
+            body[data-page-motion] button,
             .card,
             .product-card,
-            .content-card,
-            .topbar,
-            .notif-item,
-            .table tbody tr,
             .btn,
             .btn-primary,
             .btn-secondary,
@@ -153,6 +173,11 @@ function injectSoftMotionStyles() {
 }
 
 function applySoftMotion() {
+    const pageMotion = document.body.dataset.pageMotion;
+    if (!pageMotion) {
+        return;
+    }
+
     const selectors = [
         '.topbar',
         '.content-card',
@@ -174,7 +199,7 @@ function applySoftMotion() {
         }
 
         element.classList.add('soft-reveal');
-        element.style.setProperty('--reveal-delay', `${Math.min(index * 55, 420)}ms`);
+        element.style.setProperty('--reveal-delay', `${Math.min(index * Number.parseInt(getComputedStyle(document.body).getPropertyValue('--page-stagger') || '32', 10), 240)}ms`);
     });
 }
 
@@ -309,6 +334,7 @@ function setupConfirmDialogs() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.documentElement.dataset.motionEnabled = 'true';
     injectSoftMotionStyles();
     applySoftMotion();
     showGlobalAlerts();

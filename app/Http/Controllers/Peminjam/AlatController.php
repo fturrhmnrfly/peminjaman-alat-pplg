@@ -11,7 +11,9 @@ class AlatController extends Controller
 {
     public function index(Request $request)
     {
-        $kategori = Kategori::orderByRaw(
+        $kategori = Kategori::query()
+            ->select(['id', 'nama_kategori'])
+            ->orderByRaw(
             "CASE
                 WHEN LOWER(nama_kategori) = 'laptop' THEN 0
                 WHEN LOWER(nama_kategori) = 'proyektor' THEN 1
@@ -19,9 +21,16 @@ class AlatController extends Controller
              END, nama_kategori"
         )->get();
 
-        $alatQuery = Alat::with(['kategori', 'units' => function ($query) {
-            $query->orderBy('kode_unik');
-        }])->orderBy('nama_alat');
+        $alatQuery = Alat::query()
+            ->select(['id', 'kategori_id', 'nama_alat', 'keterangan', 'foto', 'jumlah', 'kondisi'])
+            ->with([
+                'kategori:id,nama_kategori',
+                'units' => function ($query) {
+                    $query->select(['id', 'alat_id', 'kode_unik', 'status'])
+                        ->orderBy('kode_unik');
+                },
+            ])
+            ->orderBy('nama_alat');
 
         if ($request->filled('kategori_id')) {
             $alatQuery->where('kategori_id', $request->kategori_id);
@@ -39,9 +48,10 @@ class AlatController extends Controller
     public function show(Alat $alat)
     {
         $alat->load([
-            'kategori',
+            'kategori:id,nama_kategori',
             'units' => function ($query) {
-                $query->orderBy('kode_unik');
+                $query->select(['id', 'alat_id', 'kode_unik', 'status', 'kondisi', 'keterangan'])
+                    ->orderBy('kode_unik');
             },
         ]);
 

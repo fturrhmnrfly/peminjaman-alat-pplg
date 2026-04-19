@@ -54,8 +54,12 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->group(function (
     Route::get('/laporan', [PetugasLaporanController::class, 'index'])->name('petugas.laporan');
     Route::get('/laporan/export-pdf', [PetugasLaporanController::class, 'exportPdf'])->name('petugas.laporan.export-pdf');
     Route::get('/pengembalian', [PetugasPengembalianController::class, 'index'])->name('petugas.pengembalian');
+    Route::patch('/pengembalian/{peminjaman}/terima', [PetugasPengembalianController::class, 'terima'])
+        ->name('petugas.pengembalian.terima');
     Route::patch('/pengembalian/{peminjaman}/konfirmasi', [PetugasPengembalianController::class, 'konfirmasi'])
         ->name('petugas.pengembalian.konfirmasi');
+    Route::patch('/pengembalian/{peminjaman}/pembayaran', [PetugasPengembalianController::class, 'konfirmasiPembayaran'])
+        ->name('petugas.pengembalian.pembayaran');
 });
 
 // Peminjam Routes

@@ -189,7 +189,7 @@
     </style>
 </head>
 
-<body data-swal-title="Peringatan">
+<body data-swal-title="Peringatan" data-page-motion="table">
     <div class="layout">
         <x-peminjam-sidebar></x-peminjam-sidebar>
 
@@ -300,7 +300,7 @@
                                     Ajukan kembali: {{ optional($row->waktu_pengajuan_pengembalian)->format('d/m/Y H:i') ?? '-' }} WIB
                                 </div>
                                 <div style="color: #6b7280; font-size: 12px;">
-                                    Dikonfirmasi: {{ optional($row->waktu_pengembalian)->format('d/m/Y H:i') ?? '-' }} WIB
+                                    Waktu pengembalian dicatat: {{ optional($row->waktu_pengembalian)->format('d/m/Y H:i') ?? '-' }} WIB
                                 </div>
                             </td>
                             <td>
@@ -316,15 +316,34 @@
                                 </div>
                             </td>
                             <td>
-                                @if($row->status === 'pengembalian_pending')
-                                    <span class="badge badge-pending">Menunggu Konfirmasi</span>
-                                @else
-                                    <span class="badge badge-selesai">Dikembalikan</span>
+                                @php
+                                    $badgeClass = $row->status === \App\Models\Peminjaman::STATUS_DIKEMBALIKAN
+                                        ? 'badge-selesai'
+                                        : 'badge-pending';
+                                @endphp
+                                <span class="badge {{ $badgeClass }}">{{ $row->status_label }}</span>
+                                @if($row->status === \App\Models\Peminjaman::STATUS_MENUNGGU_PEMERIKSAAN)
+                                    <div style="color: #6b7280; font-size: 12px; margin-top: 6px;">
+                                        Barang sudah diterima petugas, tetapi kondisi kerusakan masih diperiksa.
+                                    </div>
+                                @elseif($row->status === \App\Models\Peminjaman::STATUS_MENUNGGU_PEMBAYARAN)
+                                    <div style="color: #6b7280; font-size: 12px; margin-top: 6px;">
+                                        Denda keterlambatan sudah tercatat. Jika ada kerusakan, tagihan kerusakan juga akan muncul di total denda.
+                                    </div>
+                                @elseif($row->is_denda_lunas)
+                                    <div style="color: #065f46; font-size: 12px; margin-top: 6px; font-weight: 600;">
+                                        Denda sudah dibayar{{ $row->metode_pembayaran ? ' via ' . $row->metode_pembayaran_label : '' }}.
+                                    </div>
                                 @endif
                             </td>
                             <td>
-                                @if($row->total_denda > 0)
-                                    <strong style="color: #b91c1c;">{{ $row->total_denda_formatted }}</strong>
+                                @if($row->is_denda_lunas)
+                                    <span style="color: #065f46; font-weight: 600;">Sudah dibayar</span>
+                                    <div style="color: #6b7280; font-size: 12px;">
+                                        Status: {{ $row->status_pembayaran_denda_label }}
+                                    </div>
+                                @elseif($row->total_denda > 0)
+                                    <strong style="color: #b91c1c;">{{ $row->sisa_denda_formatted }}</strong>
                                     <div style="color: #6b7280; font-size: 12px;">
                                         Terlambat: {{ $row->denda_formatted }} | Kerusakan: {{ $row->denda_kerusakan_total_formatted }}
                                     </div>

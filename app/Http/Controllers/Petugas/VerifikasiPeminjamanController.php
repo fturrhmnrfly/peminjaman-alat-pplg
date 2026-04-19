@@ -51,6 +51,7 @@ class VerifikasiPeminjamanController extends Controller
                 }
             }
 
+            $alatCache = [];
             foreach ($peminjaman->detailPeminjamans as $detail) {
                 if ($detail->alat_unit_id) {
                     $unit = $detail->alatUnit()->lockForUpdate()->first();
@@ -58,7 +59,13 @@ class VerifikasiPeminjamanController extends Controller
                         $unit->update(['status' => 'dipinjam']);
                     }
                 } else {
-                    $detail->alat()->decrement('jumlah', $detail->jumlah_pinjam);
+                    if (!isset($alatCache[$detail->alat_id])) {
+                        $alatCache[$detail->alat_id] = $detail->alat()->lockForUpdate()->first();
+                    }
+                    $alat = $alatCache[$detail->alat_id];
+                    if ($alat) {
+                        $alat->decrement('jumlah', $detail->jumlah_pinjam);
+                    }
                 }
             }
 

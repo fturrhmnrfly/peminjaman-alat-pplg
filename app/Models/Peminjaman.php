@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Peminjaman extends Model
 {
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_DISETUJUI = 'disetujui';
+    public const STATUS_DITOLAK = 'ditolak';
+    public const STATUS_PENGEMBALIAN_PENDING = 'pengembalian_pending';
+    public const STATUS_MENUNGGU_PEMERIKSAAN = 'menunggu_pemeriksaan';
+    public const STATUS_MENUNGGU_PEMBAYARAN = 'menunggu_pembayaran';
+    public const STATUS_DIKEMBALIKAN = 'dikembalikan';
+
     public const BATAS_PENGEMBALIAN_JAM = 15;
     public const DENDA_TERLAMBAT = 2000;
 
@@ -57,9 +65,11 @@ class Peminjaman extends Model
         }
 
         $waktuPengembalian = $waktuPengembalian->copy()->timezone('Asia/Jakarta');
-        $batasKembali = $this->batas_kembali
-            ? $this->batas_kembali->copy()->timezone('Asia/Jakarta')
-            : Carbon::parse($this->tanggal_pinjam, 'Asia/Jakarta')->setTime(self::BATAS_PENGEMBALIAN_JAM, 0, 0);
+        $batasKembali = $this->batasDendaPengembalian();
+
+        if (! $batasKembali) {
+            return false;
+        }
 
         return $waktuPengembalian->gt($batasKembali);
     }
@@ -73,9 +83,11 @@ class Peminjaman extends Model
         }
 
         $waktuPengembalian = $waktuPengembalian->copy()->timezone('Asia/Jakarta');
-        $batasKembali = $this->batas_kembali
-            ? $this->batas_kembali->copy()->timezone('Asia/Jakarta')
-            : Carbon::parse($this->tanggal_pinjam, 'Asia/Jakarta')->setTime(self::BATAS_PENGEMBALIAN_JAM, 0, 0);
+        $batasKembali = $this->batasDendaPengembalian();
+
+        if (! $batasKembali) {
+            return 0;
+        }
 
         if ($waktuPengembalian->lessThanOrEqualTo($batasKembali)) {
             return 0;
@@ -127,6 +139,46 @@ class Peminjaman extends Model
         return 'Rp ' . number_format($this->total_denda, 0, ',', '.');
     }
 
+    public function getBatasDendaFormattedAttribute(): string
+    {
+        return $this->batasDendaPengembalian()?->format('d/m/Y H:i') ?? '-';
+    }
+
+    public function getIsDendaLunasAttribute(): bool
+    {
+        return $this->status === self::STATUS_DIKEMBALIKAN
+            && $this->total_denda > 0
+            && ! empty($this->metode_pembayaran);
+    }
+
+    public function getSisaDendaAttribute(): int
+    {
+        return $this->is_denda_lunas ? 0 : $this->total_denda;
+    }
+
+    public function getSisaDendaFormattedAttribute(): string
+    {
+        return 'Rp ' . number_format($this->sisa_denda, 0, ',', '.');
+    }
+
+    public function getStatusPembayaranDendaLabelAttribute(): string
+    {
+        if ($this->total_denda <= 0) {
+            return 'Tidak ada denda';
+        }
+
+        if ($this->is_denda_lunas) {
+            return 'Denda sudah dibayar';
+        }
+
+        return match ($this->status) {
+            self::STATUS_MENUNGGU_PEMBAYARAN => 'Menunggu pembayaran denda',
+            self::STATUS_MENUNGGU_PEMERIKSAAN => 'Menunggu hasil pemeriksaan',
+            self::STATUS_PENGEMBALIAN_PENDING => 'Menunggu konfirmasi petugas',
+            default => 'Status denda belum tersedia',
+        };
+    }
+
     public function getMetodePembayaranLabelAttribute(): string
     {
         return match ($this->metode_pembayaran) {
@@ -134,5 +186,35 @@ class Peminjaman extends Model
             'qris_all_payment' => 'QRIS All Payment',
             default => '-',
         };
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_PENGEMBALIAN_PENDING => 'Menunggu Konfirmasi Petugas',
+            self::STATUS_MENUNGGU_PEMERIKSAAN => 'Menunggu Pemeriksaan',
+            self::STATUS_MENUNGGU_PEMBAYARAN => 'Menunggu Pembayaran Denda',
+            self::STATUS_DIKEMBALIKAN => 'Dikembalikan',
+            self::STATUS_DISETUJUI => 'Disetujui',
+            self::STATUS_DITOLAK => 'Ditolak',
+            default => 'Pending',
+        };
+    }
+
+    private function batasDendaPengembalian(): ?Carbon
+    {
+        if ($this->batas_kembali) {
+            return $this->batas_kembali->copy()->timezone('Asia/Jakarta');
+        }
+
+        if ($this->tanggal_kembali) {
+            return $this->tanggal_kembali->copy()->timezone('Asia/Jakarta')->setTime(self::BATAS_PENGEMBALIAN_JAM, 0, 0);
+        }
+
+        if ($this->tanggal_pinjam) {
+            return $this->tanggal_pinjam->copy()->timezone('Asia/Jakarta')->setTime(self::BATAS_PENGEMBALIAN_JAM, 0, 0);
+        }
+
+        return null;
     }
 }

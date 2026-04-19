@@ -117,10 +117,6 @@
         </thead>
         <tbody>
             @forelse($rows as $row)
-                @php
-                    $status = strtolower($row->status ?? 'pending');
-                    $statusLabel = $status === 'pengembalian_pending' ? 'Menunggu Konfirmasi' : ucfirst(str_replace('_', ' ', $status));
-                @endphp
                 <tr>
                     <td>{{ $row->id }}</td>
                     <td>
@@ -142,7 +138,7 @@
                             Tidak ada
                         @endif
                     </td>
-                    <td>{{ $statusLabel }}</td>
+                    <td>{{ $row->status_label }}</td>
                     <td>
                         @forelse($row->detailPeminjamans as $detail)
                             {{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat?->nama_alat ?? '-' }}

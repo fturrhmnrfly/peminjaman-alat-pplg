@@ -194,7 +194,7 @@
     </style>
 </head>
 
-<body>
+<body data-page-motion="dashboard">
 
     <div class="layout">
 

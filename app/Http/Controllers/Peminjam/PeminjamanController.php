@@ -11,6 +11,7 @@ use App\Models\Peminjaman;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
 class PeminjamanController extends Controller
@@ -36,8 +37,10 @@ class PeminjamanController extends Controller
     public function store(Request $request)
     {
         $now = Carbon::now('Asia/Jakarta');
-        $end = $now->copy()->setTime(15, 0, 0);
-        $batasKembali = $now->gt($end) ? $end->copy()->addDay() : $end;
+        $batasKembali = $now->copy()->setTime(Peminjaman::BATAS_PENGEMBALIAN_JAM, 0, 0);
+        if ($now->gt($batasKembali)) {
+            $batasKembali->addDay();
+        }
 
         $validated = $request->validate([
             'items' => ['required', 'array', 'min:1'],
@@ -64,15 +67,22 @@ class PeminjamanController extends Controller
                 'tanggal_pinjam' => $now->toDateString(),
                 'waktu_pinjam' => $now,
                 'batas_kembali' => $batasKembali,
-                'status' => 'pending',
+                'status' => Peminjaman::STATUS_PENDING,
             ]);
             $peminjamanId = $peminjaman->id;
 
             foreach ($validated['items'] as $row) {
-                $unit = AlatUnit::with('alat')->find($row['alat_unit_id']);
+                $unit = AlatUnit::with('alat')
+                    ->lockForUpdate()
+                    ->where('status', 'tersedia')
+                    ->find($row['alat_unit_id']);
+
                 if (! $unit) {
-                    continue;
+                    throw ValidationException::withMessages([
+                        'items' => 'Salah satu alat yang dipilih sudah tidak tersedia. Silakan pilih ulang alat yang masih tersedia.',
+                    ]);
                 }
+
                 DetailPeminjaman::create([
                     'peminjaman_id' => $peminjaman->id,
                     'alat_id' => $unit->alat_id,

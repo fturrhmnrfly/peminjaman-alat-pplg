@@ -16,13 +16,18 @@ class PengembalianController extends Controller
     {
         $peminjaman = Peminjaman::with(['detailPeminjamans.alatUnit.alat', 'detailPeminjamans.alat'])
             ->where('user_id', auth()->id())
-            ->where('status', 'disetujui')
+            ->where('status', Peminjaman::STATUS_DISETUJUI)
             ->orderBy('tanggal_pinjam', 'desc')
             ->get();
 
         $riwayatPengembalian = Peminjaman::with(['detailPeminjamans.alatUnit.alat', 'detailPeminjamans.alat'])
             ->where('user_id', auth()->id())
-            ->whereIn('status', ['pengembalian_pending', 'dikembalikan'])
+            ->whereIn('status', [
+                Peminjaman::STATUS_PENGEMBALIAN_PENDING,
+                Peminjaman::STATUS_MENUNGGU_PEMERIKSAAN,
+                Peminjaman::STATUS_MENUNGGU_PEMBAYARAN,
+                Peminjaman::STATUS_DIKEMBALIKAN,
+            ])
             ->orderByDesc('waktu_pengajuan_pengembalian')
             ->orderByDesc('waktu_pengembalian')
             ->orderByDesc('tanggal_pinjam')
@@ -46,8 +51,8 @@ class PengembalianController extends Controller
                 ->lockForUpdate()
                 ->findOrFail($peminjaman->id);
 
-            if ($peminjaman->status !== 'disetujui') {
-                if ($peminjaman->status === 'pengembalian_pending') {
+            if ($peminjaman->status !== Peminjaman::STATUS_DISETUJUI) {
+                if ($peminjaman->status === Peminjaman::STATUS_PENGEMBALIAN_PENDING) {
                     return ['ok' => false, 'message' => 'Pengembalian sudah diajukan.'];
                 }
                 return ['ok' => false, 'message' => 'Belum bisa dikembalikan.'];
@@ -56,7 +61,7 @@ class PengembalianController extends Controller
             $waktuPengajuan = Carbon::now('Asia/Jakarta');
 
             $peminjaman->update([
-                'status' => 'pengembalian_pending',
+                'status' => Peminjaman::STATUS_PENGEMBALIAN_PENDING,
                 'waktu_pengajuan_pengembalian' => $waktuPengajuan,
                 'denda' => $peminjaman->hitungDendaOtomatis($waktuPengajuan),
             ]);

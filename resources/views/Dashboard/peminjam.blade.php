@@ -200,7 +200,7 @@
     </style>
 </head>
 
-<body>
+<body data-page-motion="dashboard">
 
     <div class="layout">
         <x-peminjam-sidebar></x-peminjam-sidebar>
@@ -249,6 +249,10 @@
                 <strong>📊 Ringkasan</strong>
                 <div class="stats-grid">
                     <div class="stat-box">
+                        <div class="stat-number">Rp {{ number_format($totalDenda ?? 0, 0, ',', '.') }}</div>
+                        <div class="stat-label">Sisa Denda</div>
+                    </div>
+                    <div class="stat-box">
                         <div class="stat-number">{{ $pendingCount ?? 0 }}</div>
                         <div class="stat-label">Menunggu Verifikasi</div>
                     </div>
@@ -273,4 +277,3 @@
 </body>
 
 </html>
-

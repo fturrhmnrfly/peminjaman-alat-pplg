@@ -727,7 +727,7 @@
 
             <div class="content-card">
                 <h2 class="section-title">Konfirmasi Pengembalian</h2>
-                <p class="section-desc">Periksa kondisi setiap barang terlebih dahulu. Jika ada kerusakan atau kehilangan, isi denda sesuai biaya service atau penggantian.</p>
+                <p class="section-desc">Catat hasil pemeriksaan setelah barang diterima. Jika ada tagihan, sistem akan mengirim notifikasi email lebih dulu dan pembayaran denda dikonfirmasi pada langkah terpisah.</p>
 
                 @if(session('success'))
                 <div class="alert alert-success">
@@ -761,7 +761,7 @@
                             <th>Tanggal Pinjam</th>
                             <th>Batas Kembali</th>
                             <th>Denda Terlambat</th>
-                            <th>Pemeriksaan Barang</th>
+                            <th>Aksi Petugas</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -805,20 +805,66 @@
                                 $modalId = 'inspection-modal-' . $row->id;
                             @endphp
                             <td>
-                                <button type="button" class="inspection-toggle" data-target="{{ $modalId }}" aria-expanded="false" aria-controls="{{ $modalId }}">
-                                    Form Pemeriksaan
-                                    <small>{{ $row->detailPeminjamans->count() }} barang</small>
-                                </button>
+                                @if($row->status === \App\Models\Peminjaman::STATUS_PENGEMBALIAN_PENDING)
+                                    <form method="POST" action="{{ route('petugas.pengembalian.terima', $row->id) }}">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="inspection-toggle" style="width: 100%;">
+                                            Konfirmasi Diterima
+                                            <small>Barang sudah dikembalikan peminjam</small>
+                                        </button>
+                                    </form>
+                                @elseif($row->status === \App\Models\Peminjaman::STATUS_MENUNGGU_PEMERIKSAAN)
+                                    <button type="button" class="inspection-toggle" data-target="{{ $modalId }}" aria-expanded="false" aria-controls="{{ $modalId }}">
+                                        Form Pemeriksaan
+                                        <small>{{ $row->detailPeminjamans->count() }} barang</small>
+                                    </button>
+                                @else
+                                    <div class="status-note">
+                                        Pemeriksaan selesai.
+                                        <br>
+                                        Menunggu penyelesaian tagihan.
+                                    </div>
+                                @endif
                             </td>
                             <td>
-                                @php
-                                    $isLate = ($row->denda ?? 0) > 0;
-                                @endphp
                                 <div class="status-wrap">
-                                    @if($isLate)
-                                        <span class="badge badge-late">Terlambat</span>
-                                    @else
-                                        <span class="badge badge-ok">Menunggu Konfirmasi</span>
+                                    @php
+                                        $badgeClass = $row->status === \App\Models\Peminjaman::STATUS_DIKEMBALIKAN ? 'badge-ok' : 'badge-late';
+                                    @endphp
+                                    <span class="badge {{ $badgeClass }}">{{ $row->status_label }}</span>
+                                    @if($row->status === \App\Models\Peminjaman::STATUS_PENGEMBALIAN_PENDING)
+                                        <div class="status-note">
+                                            Pengembalian sudah diajukan peminjam dan masih menunggu petugas menerima barang fisik.
+                                        </div>
+                                    @endif
+                                    @if($row->status === \App\Models\Peminjaman::STATUS_MENUNGGU_PEMERIKSAAN)
+                                        <div class="status-note">
+                                            Denda keterlambatan sudah otomatis tercatat. Denda kerusakan belum ada sampai pemeriksaan selesai.
+                                        </div>
+                                    @endif
+                                    @if($row->status === \App\Models\Peminjaman::STATUS_MENUNGGU_PEMBAYARAN)
+                                        <div class="status-note">
+                                            Total tagihan: <strong>{{ $row->total_denda_formatted }}</strong>
+                                        </div>
+                                        <form method="POST" action="{{ route('petugas.pengembalian.pembayaran', $row->id) }}" class="payment-confirm-form" data-total-denda="{{ (int) $row->total_denda }}" data-peminjam="{{ $row->user->nama ?? '-' }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="payment_confirmed" value="0" class="payment-confirmed-input">
+                                            <div class="form-group" style="width: 100%;">
+                                                <label for="pay_method_{{ $row->id }}">Metode Pembayaran</label>
+                                                <select id="pay_method_{{ $row->id }}" name="metode_pembayaran" class="form-control payment-method-select" required>
+                                                    <option value="">Pilih metode pembayaran</option>
+                                                    <option value="tunai">Tunai</option>
+                                                    <option value="qris_all_payment">QRIS All Payment</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn-primary">Konfirmasi Pembayaran</button>
+                                        </form>
+                                    @elseif($row->status === \App\Models\Peminjaman::STATUS_PENGEMBALIAN_PENDING)
+                                        <div class="status-note">
+                                            Barang sudah diajukan kembali pada {{ optional($row->waktu_pengajuan_pengembalian)->format('H:i') ?? '-' }} WIB dan menunggu pemeriksaan petugas.
+                                        </div>
                                     @endif
                                 </div>
                             </td>
@@ -854,10 +900,9 @@
             </div>
 
             <div class="inspection-dialog-body">
-                <form method="POST" action="{{ route('petugas.pengembalian.konfirmasi', $row->id) }}" class="return-confirm-form" data-row-id="{{ $row->id }}" data-late-denda="{{ (int) ($row->denda ?? 0) }}" data-peminjam="{{ $row->user->nama ?? '-' }}">
+                <form method="POST" action="{{ route('petugas.pengembalian.konfirmasi', $row->id) }}" class="return-confirm-form" data-row-id="{{ $row->id }}">
                     @csrf
                     @method('PATCH')
-                    <input type="hidden" name="payment_confirmed" value="0" class="payment-confirmed-input">
 
                     <div class="inspection-list">
                         @forelse($row->detailPeminjamans as $detail)
@@ -916,25 +961,11 @@
                     </div>
 
                     <div class="form-hint">
-                        Isi denda kerusakan dengan biaya service atau penggantian. Jika barang baik, isi `0`.
-                    </div>
-
-                    <div class="payment-method-box" hidden>
-                        <div class="form-group">
-                            <label for="metode_pembayaran_{{ $row->id }}">Metode Pembayaran</label>
-                            <select id="metode_pembayaran_{{ $row->id }}" name="metode_pembayaran" class="form-control payment-method-select">
-                                <option value="">Pilih metode pembayaran</option>
-                                <option value="tunai" @selected(old('metode_pembayaran', $row->metode_pembayaran) === 'tunai')>Tunai</option>
-                                <option value="qris_all_payment" @selected(old('metode_pembayaran', $row->metode_pembayaran) === 'qris_all_payment')>QRIS All Payment</option>
-                            </select>
-                            <div class="payment-summary">
-                                Total denda yang harus dibayar: <strong class="payment-total-label">Rp 0</strong>
-                            </div>
-                        </div>
+                        Isi denda kerusakan dengan biaya service atau penggantian. Jika total denda lebih dari `0`, sistem akan mengirim email pemberitahuan ke peminjam dan status berubah menjadi menunggu pembayaran denda.
                     </div>
 
                     <div class="inspection-actions">
-                        <button type="submit" class="btn-primary">Konfirmasi Pengembalian</button>
+                        <button type="submit" class="btn-primary">Simpan Hasil Pemeriksaan</button>
                     </div>
                 </form>
             </div>
@@ -968,7 +999,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var activeQrisForm = null;
-            var isProcessingQris = false;
             var qrisModal = document.getElementById('qris-payment-modal');
             var qrisAmount = document.getElementById('qris-payment-amount');
             var qrisNote = document.getElementById('qris-payment-note');
@@ -990,50 +1020,14 @@
                 });
                 document.body.classList.remove('modal-open');
                 activeQrisForm = null;
-                isProcessingQris = false;
                 qrisConfirmButton.disabled = false;
                 qrisCancelButton.disabled = false;
                 qrisConfirmButton.textContent = 'Tandai Sudah Dibayar';
             }
 
-            function calculateTotalDenda(form) {
-                var lateFee = Number(form.dataset.lateDenda || 0);
-                var damageFees = 0;
-
-                form.querySelectorAll('input[name*="[denda_kerusakan]"]').forEach(function(input) {
-                    damageFees += Number(input.value || 0);
-                });
-
-                return lateFee + damageFees;
-            }
-
-            function syncPaymentSection(form) {
-                var total = calculateTotalDenda(form);
-                var box = form.querySelector('.payment-method-box');
-                var select = form.querySelector('.payment-method-select');
-                var totalLabel = form.querySelector('.payment-total-label');
-                var confirmedInput = form.querySelector('.payment-confirmed-input');
-
-                if (!box || !select || !totalLabel || !confirmedInput) {
-                    return;
-                }
-
-                totalLabel.textContent = formatRupiah(total);
-
-                if (total > 0) {
-                    box.hidden = false;
-                    select.required = true;
-                } else {
-                    box.hidden = true;
-                    select.required = false;
-                    select.value = '';
-                    confirmedInput.value = '0';
-                }
-            }
-
             function openQrisModal(form) {
                 activeQrisForm = form;
-                var total = calculateTotalDenda(form);
+                var total = Number(form.dataset.totalDenda || 0);
                 var borrower = form.dataset.peminjam || 'peminjam';
 
                 qrisAmount.textContent = formatRupiah(total);
@@ -1043,7 +1037,6 @@
                     qrisModal.classList.add('is-visible');
                 });
                 document.body.classList.add('modal-open');
-                isProcessingQris = false;
                 qrisConfirmButton.disabled = false;
                 qrisCancelButton.disabled = false;
                 qrisConfirmButton.textContent = 'Tandai Sudah Dibayar';
@@ -1070,14 +1063,16 @@
             });
 
             document.querySelectorAll('.return-confirm-form').forEach(function(form) {
-                syncPaymentSection(form);
-
-                form.querySelectorAll('input[name*="[denda_kerusakan]"]').forEach(function(input) {
-                    input.addEventListener('input', function() {
-                        syncPaymentSection(form);
-                    });
+                form.addEventListener('submit', function(event) {
+                    if (form.dataset.submitting === '1') {
+                        event.preventDefault();
+                        return;
+                    }
+                    form.dataset.submitting = '1';
                 });
+            });
 
+            document.querySelectorAll('.payment-confirm-form').forEach(function(form) {
                 var select = form.querySelector('.payment-method-select');
                 var confirmedInput = form.querySelector('.payment-confirmed-input');
 
@@ -1093,16 +1088,7 @@
                         return;
                     }
 
-                    var total = calculateTotalDenda(form);
                     var paymentMethod = select ? select.value : '';
-
-                    if (total <= 0) {
-                        if (confirmedInput) {
-                            confirmedInput.value = '0';
-                        }
-                        form.dataset.submitting = '1';
-                        return;
-                    }
 
                     if (!paymentMethod) {
                         event.preventDefault();
@@ -1129,7 +1115,7 @@
             });
 
             qrisConfirmButton.addEventListener('click', function() {
-                if (!activeQrisForm || isProcessingQris) {
+                if (!activeQrisForm) {
                     closeAllModals();
                     return;
                 }
@@ -1141,7 +1127,6 @@
                     confirmedInput.value = '1';
                 }
 
-                isProcessingQris = true;
                 activeQrisForm.dataset.submitting = '1';
                 qrisConfirmButton.disabled = true;
                 qrisCancelButton.disabled = true;

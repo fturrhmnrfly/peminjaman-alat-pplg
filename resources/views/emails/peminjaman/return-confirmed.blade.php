@@ -6,10 +6,10 @@
 </head>
 <body style="margin:0;padding:24px;background:#f5f7fb;font-family:Arial,Helvetica,sans-serif;color:#1f2937;">
     <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:18px;padding:32px;border:1px solid #e5e7eb;">
-        <div style="font-size:24px;font-weight:700;margin-bottom:12px;">Pengembalian Sudah Dikonfirmasi</div>
+        <div style="font-size:24px;font-weight:700;margin-bottom:12px;">Pengembalian Selesai Diproses</div>
         <p style="margin:0 0 14px;line-height:1.6;">Halo {{ $peminjaman->user?->nama }},</p>
         <p style="margin:0 0 18px;line-height:1.6;">
-            Pengembalian alat untuk peminjaman <strong>#{{ $peminjaman->id }}</strong> sudah dikonfirmasi oleh petugas.
+            Pengembalian alat untuk peminjaman <strong>#{{ $peminjaman->id }}</strong> sudah selesai diproses oleh petugas.
         </p>
 
         <div style="margin-bottom:20px;padding:18px 20px;background:#f8fafc;border-radius:14px;">
@@ -40,14 +40,23 @@
         </div>
 
         <div style="margin-bottom:18px;line-height:1.8;">
-            <div>Denda terlambat: <strong>Rp {{ number_format($peminjaman->denda ?? 0, 0, ',', '.') }}</strong></div>
-            <div>Denda kerusakan: <strong>Rp {{ number_format($peminjaman->denda_kerusakan_total, 0, ',', '.') }}</strong></div>
-            <div>Total denda: <strong>Rp {{ number_format($peminjaman->total_denda, 0, ',', '.') }}</strong></div>
-            <div>Waktu konfirmasi: <strong>{{ optional($peminjaman->waktu_pengembalian)?->timezone('Asia/Jakarta')->format('d/m/Y H:i') ?? '-' }} WIB</strong></div>
+            <div>Status pengembalian: <strong>{{ $peminjaman->status_label }}</strong></div>
+            <div>Waktu pengembalian dicatat: <strong>{{ optional($peminjaman->waktu_pengembalian)?->timezone('Asia/Jakarta')->format('d/m/Y H:i') ?? '-' }} WIB</strong></div>
+            @if($peminjaman->is_denda_lunas)
+                <div>Status denda: <strong>Sudah dibayar</strong></div>
+                <div>Metode pembayaran: <strong>{{ $peminjaman->metode_pembayaran_label }}</strong></div>
+            @elseif($peminjaman->total_denda > 0)
+                <div>Status denda: <strong>{{ $peminjaman->status_pembayaran_denda_label }}</strong></div>
+                <div>Denda terlambat: <strong>Rp {{ number_format($peminjaman->denda ?? 0, 0, ',', '.') }}</strong></div>
+                <div>Denda kerusakan: <strong>Rp {{ number_format($peminjaman->denda_kerusakan_total, 0, ',', '.') }}</strong></div>
+                <div>Total tagihan: <strong>Rp {{ number_format($peminjaman->total_denda, 0, ',', '.') }}</strong></div>
+            @else
+                <div>Status denda: <strong>Tidak ada denda</strong></div>
+            @endif
         </div>
 
         <p style="margin:0;line-height:1.6;color:#6b7280;">
-            Terima kasih sudah mengembalikan alat. Jika ada pertanyaan, silakan hubungi petugas.
+            Terima kasih sudah mengembalikan alat. Jika masih ada yang ingin ditanyakan, silakan hubungi petugas ruang alat.
         </p>
     </div>
 </body>

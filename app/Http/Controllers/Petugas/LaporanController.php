@@ -99,7 +99,7 @@ class LaporanController extends Controller
         return $request->validate([
             'from_date' => ['nullable', 'date'],
             'to_date' => ['nullable', 'date', 'after_or_equal:from_date'],
-            'status' => ['nullable', 'in:pending,disetujui,ditolak,pengembalian_pending,dikembalikan'],
+            'status' => ['nullable', 'in:pending,disetujui,ditolak,pengembalian_pending,menunggu_pemeriksaan,menunggu_pembayaran,dikembalikan'],
             'export' => ['nullable', 'in:csv'],
         ]);
     }

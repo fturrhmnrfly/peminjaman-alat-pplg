@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ReturnConfirmedMail extends Mailable
+class ReturnDamageNoticeMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -21,14 +21,14 @@ class ReturnConfirmedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pengembalian Alat Selesai Diproses',
+            subject: 'Hasil Pemeriksaan Pengembalian Alat',
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.peminjaman.return-confirmed',
+            view: 'emails.peminjaman.return-damage-notice',
         );
     }
 }

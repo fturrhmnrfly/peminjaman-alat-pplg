@@ -403,7 +403,7 @@
     </style>
 </head>
 
-<body>
+<body data-page-motion="catalog">
     @php
         /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
         $publicDisk = \Illuminate\Support\Facades\Storage::disk('public');

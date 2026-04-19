@@ -268,7 +268,7 @@
     </style>
 </head>
 
-<body data-swal-title="Peringatan">
+<body data-swal-title="Peringatan" data-page-motion="table">
     <div class="layout">
         <x-peminjam-sidebar></x-peminjam-sidebar>
 
@@ -359,7 +359,7 @@
                                 @endphp
                                 @if($row->batas_kembali)
                                     <div class="deadline-note {{ $isNextDayDeadline ? 'deadline-note-next-day' : 'deadline-note-same-day' }}">
-                                        {{ $isNextDayDeadline ? 'Batas kembali besok jam 15:00 WIB' : 'Batas kembali hari ini jam 15:00 WIB' }}
+                                        {{ $isNextDayDeadline ? 'Batas kembali besok jam 15:00 WIB' : 'Batas kembali hari yang sama jam 15:00 WIB' }}
                                     </div>
                                 @endif
                                 <div>Kembali: {{ optional($row->tanggal_kembali)->format('d/m/Y') ?? '-' }}</div>
@@ -371,13 +371,11 @@
                                     if ($status === 'disetujui') $badgeClass = 'badge-disetujui';
                                     elseif ($status === 'ditolak') $badgeClass = 'badge-ditolak';
                                     elseif ($status === 'pengembalian_pending') $badgeClass = 'badge-pending';
+                                    elseif ($status === 'menunggu_pemeriksaan') $badgeClass = 'badge-pending';
+                                    elseif ($status === 'menunggu_pembayaran') $badgeClass = 'badge-pending';
                                     elseif ($status === 'dikembalikan') $badgeClass = 'badge-dikembalikan';
                                 @endphp
-                                @php
-                                    $statusLabel = $status;
-                                    if ($status === 'pengembalian_pending') $statusLabel = 'Menunggu Konfirmasi';
-                                @endphp
-                                <span class="badge {{ $badgeClass }}">{{ ucfirst($statusLabel) }}</span>
+                                <span class="badge {{ $badgeClass }}">{{ $row->status_label }}</span>
                             </td>
                             <td>
                                 <div class="item-list">

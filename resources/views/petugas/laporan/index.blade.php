@@ -141,7 +141,9 @@
                                 <option value="pending" @selected($filters['status'] === 'pending')>Pending</option>
                                 <option value="disetujui" @selected($filters['status'] === 'disetujui')>Disetujui</option>
                                 <option value="ditolak" @selected($filters['status'] === 'ditolak')>Ditolak</option>
-                                <option value="pengembalian_pending" @selected($filters['status'] === 'pengembalian_pending')>Menunggu Konfirmasi</option>
+                                <option value="pengembalian_pending" @selected($filters['status'] === 'pengembalian_pending')>Menunggu Konfirmasi Petugas</option>
+                                <option value="menunggu_pemeriksaan" @selected($filters['status'] === 'menunggu_pemeriksaan')>Menunggu Pemeriksaan</option>
+                                <option value="menunggu_pembayaran" @selected($filters['status'] === 'menunggu_pembayaran')>Menunggu Pembayaran Denda</option>
                                 <option value="dikembalikan" @selected($filters['status'] === 'dikembalikan')>Dikembalikan</option>
                             </select>
                         </div>
@@ -202,13 +204,11 @@
                                     if ($status === 'disetujui') $badgeClass = 'badge-disetujui';
                                     elseif ($status === 'ditolak') $badgeClass = 'badge-ditolak';
                                     elseif ($status === 'pengembalian_pending') $badgeClass = 'badge-pending';
+                                    elseif ($status === 'menunggu_pemeriksaan') $badgeClass = 'badge-pending';
+                                    elseif ($status === 'menunggu_pembayaran') $badgeClass = 'badge-pending';
                                     elseif ($status === 'dikembalikan') $badgeClass = 'badge-dikembalikan';
                                 @endphp
-                                @php
-                                    $statusLabel = $status;
-                                    if ($status === 'pengembalian_pending') $statusLabel = 'Menunggu Konfirmasi';
-                                @endphp
-                                <span class="badge {{ $badgeClass }}">{{ ucfirst($statusLabel) }}</span>
+                                <span class="badge {{ $badgeClass }}">{{ $row->status_label }}</span>
                                 </td>
                                 <td>
                                     @forelse($row->detailPeminjamans as $detail)

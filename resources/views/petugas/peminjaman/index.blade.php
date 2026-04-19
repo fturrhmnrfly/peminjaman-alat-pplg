@@ -296,13 +296,11 @@
                                     if ($status === 'disetujui') $badgeClass = 'badge-disetujui';
                                     elseif ($status === 'ditolak') $badgeClass = 'badge-ditolak';
                                     elseif ($status === 'pengembalian_pending') $badgeClass = 'badge-menunggu';
-                                    elseif ($status === 'selesai') $badgeClass = 'badge-selesai';
+                                    elseif ($status === 'menunggu_pemeriksaan') $badgeClass = 'badge-menunggu';
+                                    elseif ($status === 'menunggu_pembayaran') $badgeClass = 'badge-menunggu';
+                                    elseif ($status === 'selesai' || $status === 'dikembalikan') $badgeClass = 'badge-selesai';
                                 @endphp
-                                @php
-                                    $statusLabel = $status;
-                                    if ($status === 'pengembalian_pending') $statusLabel = 'Menunggu Konfirmasi';
-                                @endphp
-                                <span class="badge {{ $badgeClass }}">{{ ucfirst($statusLabel) }}</span>
+                                <span class="badge {{ $badgeClass }}">{{ $row->status_label }}</span>
                             </td>
                             <td>
                                 <div class="item-list">

@@ -33,13 +33,29 @@ class DashboardController extends Controller
         }
 
         if ($role === 'peminjam') {
+            $peminjamanUser = Peminjaman::with('detailPeminjamans')
+                ->where('user_id', $user->id)
+                ->get();
+
             $data = [
                 'user' => $user,
                 'totalAlat' => Alat::count(),
-                'pendingCount' => Peminjaman::where('user_id', $user->id)->where('status', 'pending')->count(),
-                'disetujuiCount' => Peminjaman::where('user_id', $user->id)->where('status', 'disetujui')->count(),
-                'ditolakCount' => Peminjaman::where('user_id', $user->id)->where('status', 'ditolak')->count(),
-                'dikembalikanCount' => Peminjaman::where('user_id', $user->id)->where('status', 'dikembalikan')->count(),
+                'pendingCount' => $peminjamanUser->where('status', Peminjaman::STATUS_PENDING)->count(),
+                'disetujuiCount' => $peminjamanUser->where('status', Peminjaman::STATUS_DISETUJUI)->count(),
+                'ditolakCount' => $peminjamanUser->where('status', Peminjaman::STATUS_DITOLAK)->count(),
+                'dikembalikanCount' => $peminjamanUser->where('status', Peminjaman::STATUS_DIKEMBALIKAN)->count(),
+                'totalDenda' => $peminjamanUser
+                    ->filter(function (Peminjaman $peminjaman) {
+                        return in_array($peminjaman->status, [
+                            Peminjaman::STATUS_PENGEMBALIAN_PENDING,
+                            Peminjaman::STATUS_MENUNGGU_PEMERIKSAAN,
+                            Peminjaman::STATUS_MENUNGGU_PEMBAYARAN,
+                            Peminjaman::STATUS_DIKEMBALIKAN,
+                        ], true);
+                    })
+                    ->sum(function (Peminjaman $peminjaman) {
+                        return $peminjaman->sisa_denda;
+                    }),
             ];
 
             return view('Dashboard.peminjam', $data);

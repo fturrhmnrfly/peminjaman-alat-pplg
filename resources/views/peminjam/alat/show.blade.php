@@ -337,7 +337,7 @@
     </style>
 </head>
 
-<body>
+<body data-page-motion="detail">
     @php
         /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
         $publicDisk = \Illuminate\Support\Facades\Storage::disk('public');
