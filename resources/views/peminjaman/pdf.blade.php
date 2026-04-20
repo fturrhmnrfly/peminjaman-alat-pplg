@@ -5,81 +5,30 @@
     <meta charset="UTF-8">
     <title>Ruang Alat</title>
     <style>
-        body {
-            font-family: DejaVu Sans, sans-serif;
-            color: #1f2937;
-            font-size: 12px;
-        }
-
-        .header {
-            margin-bottom: 18px;
-        }
-
-        .title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .subtitle {
-            font-size: 11px;
-            color: #4b5563;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #d1d5db;
-            padding: 8px;
-            text-align: left;
-            vertical-align: top;
-        }
-
-        th {
-            background: #e5e7eb;
-            font-size: 11px;
-        }
-
-        .muted {
-            color: #6b7280;
-            font-size: 10px;
-        }
-
-        .danger {
-            color: #b91c1c;
-            font-weight: 700;
-        }
-
-        .success {
-            color: #065f46;
-            font-weight: 700;
-        }
-
-        .item {
-            margin-bottom: 4px;
-        }
+        @include('reports.partials.pdf-report-styles')
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <div class="title">Laporan Data Peminjaman</div>
-        <div class="subtitle">Dicetak pada {{ $printedAt->format('d/m/Y H:i') }} WIB</div>
-    </div>
+    @include('reports.partials.header', ['title' => 'Laporan Peminjaman Alat'])
+    @include('reports.partials.meta-table', [
+        'rows' => [
+            ['label' => 'Dicetak pada', 'value' => $printedAt->format('d/m/Y H:i') . ' WIB'],
+            ['label' => 'Dari tanggal', 'value' => 'Semua'],
+            ['label' => 'Sampai tanggal', 'value' => 'Semua'],
+            ['label' => 'Status', 'value' => 'Semua status'],
+        ],
+    ])
 
-    <table>
+    <table class="report">
         <thead>
             <tr>
-                <th>No</th>
-                <th>Peminjam</th>
-                <th>Tanggal</th>
-                <th>Denda</th>
-                <th>Status</th>
-                <th>Detail Alat</th>
+                <th style="width: 5%;">No</th>
+                <th style="width: 18%;">Peminjam</th>
+                <th style="width: 18%;">Tanggal</th>
+                <th style="width: 15%;">Denda</th>
+                <th style="width: 14%;">Status</th>
+                <th style="width: 30%;">Detail Alat</th>
             </tr>
         </thead>
         <tbody>
@@ -87,8 +36,8 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>
-                        <div>{{ $row->user->nama ?? '-' }}</div>
-                        <div class="muted">{{ $row->user->email ?? '-' }}</div>
+                        <div><strong>{{ $row->user->nama ?? '-' }}</strong></div>
+                        <div class="muted">{{ $row->user->username ?? $row->user->email ?? '-' }}</div>
                     </td>
                     <td>
                         <div>Pinjam: {{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</div>
@@ -104,21 +53,21 @@
                             <div class="success">Tidak ada</div>
                         @endif
                     </td>
-                    <td>{{ ucfirst(str_replace('_', ' ', $row->status ?? '-')) }}</td>
+                    <td>{{ $row->status_label }}</td>
                     <td>
                         @forelse($row->detailPeminjamans as $detail)
                             <div class="item">
-                                {{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}
+                                {{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat?->nama_alat ?? '-' }}
                                 ({{ $detail->alatUnit?->kode_unik ?? '-' }})
                             </div>
                         @empty
-                            <div>Tidak ada detail alat</div>
+                            <div class="muted">Tidak ada detail alat</div>
                         @endforelse
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6">Belum ada data peminjaman.</td>
+                    <td colspan="6" class="empty">Belum ada data peminjaman.</td>
                 </tr>
             @endforelse
         </tbody>

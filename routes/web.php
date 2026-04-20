@@ -70,6 +70,8 @@ Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->group(function
     Route::get('pengembalian', [PeminjamPengembalianController::class, 'index'])->name('peminjam.pengembalian.index');
     Route::patch('pengembalian/{peminjaman}', [PeminjamPengembalianController::class, 'update'])
         ->name('peminjam.pengembalian.update');
+    Route::patch('pengembalian/{peminjaman}/bayar-denda', [PeminjamPengembalianController::class, 'bayarDenda'])
+        ->name('peminjam.pengembalian.bayar-denda');
 });
 
 Route::middleware('auth')->group(function () {

@@ -5,89 +5,32 @@
     <meta charset="UTF-8">
     <title>Ruang Alat</title>
     <style>
-        body {
-            font-family: DejaVu Sans, sans-serif;
-            color: #1f2937;
-            font-size: 12px;
-        }
-
-        .header {
-            margin-bottom: 18px;
-        }
-
-        .title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .subtitle {
-            font-size: 11px;
-            color: #4b5563;
-            margin-bottom: 10px;
-        }
-
-        .filters {
-            margin-bottom: 16px;
-            padding: 10px 12px;
-            background: #f3f4f6;
-            border-radius: 8px;
-        }
-
-        .filters div {
-            margin-bottom: 4px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #d1d5db;
-            padding: 8px;
-            vertical-align: top;
-            text-align: left;
-        }
-
-        th {
-            background: #e5e7eb;
-            font-size: 11px;
-        }
-
-        .muted {
-            color: #6b7280;
-            font-size: 10px;
-        }
+        @include('reports.partials.pdf-report-styles')
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <div class="title">Laporan Log Aktivitas</div>
-        <div class="subtitle">Dicetak pada {{ $printedAt->format('d/m/Y H:i') }} WIB</div>
-    </div>
+    @include('reports.partials.header', ['title' => 'Laporan Log Aktivitas'])
+    @include('reports.partials.meta-table', [
+        'rows' => [
+            ['label' => 'Dicetak pada', 'value' => $printedAt->format('d/m/Y H:i') . ' WIB'],
+            ['label' => 'Pencarian', 'value' => ($filters['search'] ?? '') !== '' ? $filters['search'] : 'Semua data'],
+            ['label' => 'Modul', 'value' => ($filters['modul'] ?? '') !== '' ? $filters['modul'] : 'Semua modul'],
+            ['label' => 'Aksi', 'value' => ($filters['aksi'] ?? '') !== '' ? $filters['aksi'] : 'Semua aksi'],
+            ['label' => 'Periode', 'value' => (($filters['tanggal_dari'] ?? '') !== '' ? \Carbon\Carbon::parse($filters['tanggal_dari'])->format('d/m/Y') : 'Semua') . ' s.d. ' . (($filters['tanggal_sampai'] ?? '') !== '' ? \Carbon\Carbon::parse($filters['tanggal_sampai'])->format('d/m/Y') : 'Semua')],
+        ],
+    ])
 
-    <div class="filters">
-        <div><strong>Pencarian:</strong> {{ $filters['search'] ?? 'Semua data' ?: 'Semua data' }}</div>
-        <div><strong>Modul:</strong> {{ $filters['modul'] ?? 'Semua modul' ?: 'Semua modul' }}</div>
-        <div><strong>Aksi:</strong> {{ $filters['aksi'] ?? 'Semua aksi' ?: 'Semua aksi' }}</div>
-        <div><strong>Periode:</strong>
-            {{ ($filters['tanggal_dari'] ?? '') ?: '-' }} s.d. {{ ($filters['tanggal_sampai'] ?? '') ?: '-' }}
-        </div>
-    </div>
-
-    <table>
+    <table class="report">
         <thead>
             <tr>
-                <th>No</th>
-                <th>Waktu</th>
-                <th>User</th>
-                <th>Aksi</th>
-                <th>Modul</th>
-                <th>Keterangan</th>
-                <th>IP Address</th>
+                <th style="width: 5%;">No</th>
+                <th style="width: 14%;">Waktu</th>
+                <th style="width: 18%;">User</th>
+                <th style="width: 9%;">Aksi</th>
+                <th style="width: 11%;">Modul</th>
+                <th style="width: 31%;">Keterangan</th>
+                <th style="width: 12%;">IP Address</th>
             </tr>
         </thead>
         <tbody>
@@ -96,17 +39,17 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $log->created_at->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
                     <td>
-                        <div>{{ $log->nama_user }}</div>
+                        <div><strong>{{ $log->nama_user }}</strong></div>
                         <div class="muted">{{ $log->user->email ?? '-' }}</div>
                     </td>
-                    <td>{{ $log->aksi }}</td>
+                    <td><strong>{{ $log->aksi }}</strong></td>
                     <td>{{ $log->modul }}</td>
                     <td>{{ $log->keterangan ?? '-' }}</td>
                     <td>{{ $log->ip_address }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7">Tidak ada data log aktivitas.</td>
+                    <td colspan="7" class="empty">Tidak ada data log aktivitas.</td>
                 </tr>
             @endforelse
         </tbody>

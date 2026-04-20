@@ -35,10 +35,25 @@
         .badge-disetujui { background: #d1fae5; color: #065f46; }
         .badge-ditolak { background: #fee2e2; color: #991b1b; }
         .badge-dikembalikan { background: #fef3c7; color: #92400e; }
+        .report-print-only { display: none; }
+        .meta { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+        .meta td { padding: 4px 0; border: none; vertical-align: top; }
+        .report-meta-label { width: 140px; color: #6b7280; }
+        .muted { color: #6b7280; font-size: 12px; }
+        .text-danger { color: #b91c1c; font-weight: 700; }
+        .text-success { color: #065f46; font-weight: 600; }
+        .detail-line { margin-bottom: 4px; }
 
         @media print {
+            @page {
+                size: A4 landscape;
+                margin: 18px;
+            }
+
             body {
                 background: white;
+                font-family: DejaVu Sans, sans-serif;
+                font-size: 12px;
             }
 
             .layout {
@@ -47,7 +62,10 @@
 
             .sidebar,
             .topbar,
-            .actions {
+            .actions,
+            .section-title,
+            .section-desc,
+            #filterForm .form-grid {
                 display: none !important;
             }
 
@@ -61,47 +79,62 @@
                 padding: 0;
             }
 
-            .section-title {
+            .report-print-only {
+                display: block;
+                margin-bottom: 18px;
+            }
+
+            .report-print-only .title {
                 font-size: 20px;
-                margin-bottom: 6px;
-            }
-
-            .section-desc {
-                margin-bottom: 14px;
-            }
-
-            #filterForm {
-                margin-bottom: 12px;
-            }
-
-            .form-grid {
-                display: flex;
-                gap: 18px;
-                margin-bottom: 12px;
-            }
-
-            .form-group input,
-            .form-group select {
-                border: none;
-                padding: 0;
-                background: transparent;
+                font-weight: 700;
+                margin-bottom: 4px;
                 color: #111827;
             }
 
+            .report-print-only .subtitle {
+                color: #4b5563;
+                font-size: 11px;
+                margin-bottom: 24px;
+            }
+
+            #filterForm {
+                margin-bottom: 0;
+            }
+
             .table {
-                margin-top: 12px;
+                margin-top: 0;
                 font-size: 12px;
+            }
+
+            .table thead {
+                background: #e5e7eb !important;
             }
 
             .table th,
             .table td {
-                padding: 8px 6px;
+                padding: 8px;
+                border: 1px solid #d1d5db;
+                background: white !important;
+            }
+
+            .table th {
+                font-size: 11px;
+                font-weight: 700;
+                color: #111827;
             }
 
             .badge {
-                border: 1px solid #d1d5db;
+                border: none;
+                padding: 0;
+                border-radius: 0;
                 color: #111827 !important;
                 background: transparent !important;
+                font-size: 12px;
+                font-weight: 400;
+            }
+
+            .muted {
+                font-size: 10px;
             }
         }
     </style>
@@ -121,6 +154,19 @@
             </div>
 
             <div class="content-card">
+                <div class="report-print-only">
+                    @include('reports.partials.header', ['title' => 'Laporan Peminjaman Alat'])
+                    @include('reports.partials.meta-table', [
+                        'rows' => [
+                            ['label' => 'Dicetak pada', 'value' => now('Asia/Jakarta')->format('d/m/Y H:i') . ' WIB'],
+                            ['label' => 'Dari tanggal', 'value' => $filters['from_date'] ? \Carbon\Carbon::parse($filters['from_date'])->format('d/m/Y') : 'Semua'],
+                            ['label' => 'Sampai tanggal', 'value' => $filters['to_date'] ? \Carbon\Carbon::parse($filters['to_date'])->format('d/m/Y') : 'Semua'],
+                            ['label' => 'Status', 'value' => $filters['status'] ? ucfirst(str_replace('_', ' ', $filters['status'])) : 'Semua status'],
+                        ],
+                        'labelClass' => 'report-meta-label',
+                    ])
+                </div>
+
                 <h2 class="section-title">Filter Laporan</h2>
                 <p class="section-desc">Atur periode dan status, lalu cetak atau unduh CSV.</p>
 
@@ -181,7 +227,7 @@
                                 <td>{{ $row->id }}</td>
                                 <td>
                                     <strong>{{ $row->user->nama ?? '-' }}</strong>
-                                    <div style="color:#6b7280;font-size:12px;">{{ $row->user->username ?? '-' }}</div>
+                                    <div class="muted">{{ $row->user->username ?? '-' }}</div>
                                 </td>
                                 <td>
                                     <div>Pinjam: {{ optional($row->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</div>
@@ -189,12 +235,12 @@
                                 </td>
                                 <td>
                                     @if($row->total_denda > 0)
-                                        <strong style="color:#b91c1c;">{{ $row->total_denda_formatted }}</strong>
-                                        <div style="color:#6b7280;font-size:12px;">
+                                        <strong class="text-danger">{{ $row->total_denda_formatted }}</strong>
+                                        <div class="muted">
                                             Terlambat: {{ $row->denda_formatted }} ({{ $row->jumlah_hari_terlambat }} kali) | Kerusakan: {{ $row->denda_kerusakan_total_formatted }}
                                         </div>
                                     @else
-                                        <span style="color:#065f46;font-weight:600;">Tidak ada</span>
+                                        <span class="text-success">Tidak ada</span>
                                     @endif
                                 </td>
                                 <td>
@@ -212,12 +258,12 @@
                                 </td>
                                 <td>
                                     @forelse($row->detailPeminjamans as $detail)
-                                        <div>
-                                            {{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}
+                                        <div class="detail-line">
+                                            {{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat?->nama_alat ?? '-' }}
                                             ({{ $detail->alatUnit?->kode_unik ?? '-' }})
                                         </div>
                                     @empty
-                                        <div style="color:#9ca3af;">Tidak ada detail alat</div>
+                                        <div class="muted">Tidak ada detail alat</div>
                                     @endforelse
                                 </td>
                             </tr>
@@ -235,4 +281,3 @@
     </div>
 </body>
 </html>
-

@@ -344,6 +344,23 @@
             display: none;
         }
 
+        .meta {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+
+        .meta td {
+            padding: 4px 0;
+            border: none;
+            vertical-align: top;
+        }
+
+        .print-meta-label {
+            width: 130px;
+            color: #6b7280;
+        }
+
         .logout-btn {
             background: #ef4444;
             color: white;
@@ -381,8 +398,15 @@
         }
 
         @media print {
+            @page {
+                size: A4 landscape;
+                margin: 16px;
+            }
+
             body {
                 background: #fff;
+                font-family: DejaVu Sans, sans-serif;
+                font-size: 11px;
             }
 
             .layout {
@@ -411,6 +435,111 @@
                 display: block;
                 margin-bottom: 18px;
             }
+
+            .page-intro {
+                display: none;
+            }
+
+            .print-only .title {
+                font-size: 20px;
+                font-weight: 700;
+                color: #111827;
+                margin-bottom: 4px;
+            }
+
+            .print-only .subtitle {
+                color: #4b5563;
+                font-size: 11px;
+                margin-bottom: 18px;
+            }
+
+            .summary-grid {
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+
+            .summary-card {
+                border-radius: 10px;
+                padding: 12px 14px;
+                background: #fff;
+                break-inside: avoid;
+            }
+
+            .summary-label {
+                font-size: 11px;
+                margin-bottom: 4px;
+            }
+
+            .summary-value {
+                font-size: 20px;
+            }
+
+            .summary-note {
+                font-size: 10px;
+            }
+
+            .table-card {
+                border-radius: 0;
+            }
+
+            .table-head {
+                padding: 0 0 12px;
+                border-bottom: none;
+            }
+
+            .table-head h2 {
+                font-size: 18px;
+                margin-bottom: 4px;
+            }
+
+            .table-head p {
+                font-size: 11px;
+            }
+
+            .table-wrapper {
+                overflow: visible;
+            }
+
+            thead {
+                background: #e5e7eb !important;
+            }
+
+            th,
+            td {
+                padding: 8px;
+                border: 1px solid #d1d5db;
+                font-size: 11px;
+                background: #fff !important;
+            }
+
+            th {
+                color: #111827;
+                font-weight: 700;
+                font-size: 10px;
+            }
+
+            tbody tr:hover {
+                background: transparent;
+            }
+
+            .badge {
+                display: inline;
+                padding: 0;
+                border-radius: 0;
+                background: transparent !important;
+                color: #111827 !important;
+                font-size: 11px;
+                font-weight: 700;
+            }
+
+            .muted {
+                font-size: 10px;
+            }
+
+            .empty-state {
+                padding: 24px 0;
+                border: 1px solid #d1d5db;
+            }
         }
     </style>
 </head>
@@ -434,8 +563,17 @@
             </div>
 
             <div class="print-only">
-                <h2>Laporan Log Aktivitas</h2>
-                <p class="muted">Dicetak pada {{ now('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</p>
+                @include('reports.partials.header', ['title' => 'Laporan Log Aktivitas'])
+                @include('reports.partials.meta-table', [
+                    'rows' => [
+                        ['label' => 'Dicetak pada', 'value' => now('Asia/Jakarta')->format('d/m/Y H:i') . ' WIB'],
+                        ['label' => 'Pencarian', 'value' => ($filters['search'] ?? '') !== '' ? $filters['search'] : 'Semua data'],
+                        ['label' => 'Modul', 'value' => ($filters['modul'] ?? '') !== '' ? $filters['modul'] : 'Semua modul'],
+                        ['label' => 'Aksi', 'value' => ($filters['aksi'] ?? '') !== '' ? $filters['aksi'] : 'Semua aksi'],
+                        ['label' => 'Periode', 'value' => (($filters['tanggal_dari'] ?? '') !== '' ? \Carbon\Carbon::parse($filters['tanggal_dari'])->format('d/m/Y') : 'Semua') . ' s.d. ' . (($filters['tanggal_sampai'] ?? '') !== '' ? \Carbon\Carbon::parse($filters['tanggal_sampai'])->format('d/m/Y') : 'Semua')],
+                    ],
+                    'labelClass' => 'print-meta-label',
+                ])
             </div>
 
             @if(session('success'))

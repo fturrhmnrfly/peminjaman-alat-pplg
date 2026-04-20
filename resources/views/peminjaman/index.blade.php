@@ -234,6 +234,23 @@
             font-weight: 700;
         }
 
+        .meta {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+
+        .meta td {
+            padding: 4px 0;
+            border: none;
+            vertical-align: top;
+        }
+
+        .report-meta-label {
+            width: 150px;
+            color: #6b7280;
+        }
+
         .pagination {
             display: flex;
             justify-content: center;
@@ -299,12 +316,88 @@
 
             .content-card {
                 box-shadow: none;
-                border: 1px solid #d1d5db;
+                border: none;
+                border-radius: 0;
+                padding: 0;
             }
 
             .print-only {
                 display: block;
                 margin-bottom: 18px;
+            }
+
+            .print-only .title {
+                font-size: 20px;
+                font-weight: 700;
+                color: #111827;
+                margin-bottom: 4px;
+            }
+
+            .print-only .subtitle {
+                color: #4b5563;
+                font-size: 11px;
+                margin-bottom: 24px;
+            }
+
+            table thead {
+                background: #e5e7eb !important;
+            }
+
+            table th,
+            table td {
+                border: 1px solid #d1d5db;
+                padding: 8px 10px;
+                background: white !important;
+            }
+
+            table th {
+                font-size: 11px;
+                font-weight: 700;
+                color: #111827;
+            }
+
+            table tbody tr:hover {
+                background: transparent;
+            }
+
+            .badge {
+                padding: 0;
+                border-radius: 0;
+                background: transparent !important;
+                color: #111827 !important;
+                font-size: 12px;
+                font-weight: 400;
+            }
+
+            .item-list {
+                gap: 4px;
+            }
+
+            .item {
+                display: block;
+                background: transparent;
+                border-radius: 0;
+                padding: 0;
+            }
+
+            .item-name,
+            .item-qty {
+                display: inline;
+                font-weight: 400;
+                color: #111827;
+                font-size: 12px;
+            }
+
+            .item-name::after {
+                content: " ";
+            }
+
+            .item-qty::before {
+                content: "(";
+            }
+
+            .item-qty::after {
+                content: ")";
             }
         }
     </style>
@@ -332,8 +425,16 @@
             <!-- CONTENT -->
             <div class="content-card">
                 <div class="print-only">
-                    <h2>Data Peminjaman</h2>
-                    <p class="text-muted">Dicetak pada {{ now('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</p>
+                    @include('reports.partials.header', ['title' => 'Laporan Peminjaman Alat'])
+                    @include('reports.partials.meta-table', [
+                        'rows' => [
+                            ['label' => 'Dicetak pada', 'value' => now('Asia/Jakarta')->format('d/m/Y H:i') . ' WIB'],
+                            ['label' => 'Dari tanggal', 'value' => 'Semua'],
+                            ['label' => 'Sampai tanggal', 'value' => 'Semua'],
+                            ['label' => 'Status', 'value' => 'Semua status'],
+                        ],
+                        'labelClass' => 'report-meta-label',
+                    ])
                 </div>
 
                 <!-- Alert Messages -->
@@ -378,7 +479,7 @@
                             <td>
                                 <strong>{{ $row->user->nama ?? '-' }}</strong>
                                 <div style="color: #6b7280; font-size: 12px;">
-                                    {{ $row->user->email ?? '-' }}
+                                    {{ $row->user->username ?? $row->user->email ?? '-' }}
                                 </div>
                             </td>
                             <td>
@@ -414,7 +515,7 @@
                                 <div class="item-list">
                                     @forelse($row->detailPeminjamans as $detail)
                                     <div class="item">
-                                        <span class="item-name">{{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat->nama_alat ?? '-' }}</span>
+                                        <span class="item-name">{{ $detail->alatUnit?->alat?->nama_alat ?? $detail->alat?->nama_alat ?? '-' }}</span>
                                         <span class="item-qty">{{ $detail->alatUnit?->kode_unik ?? '-' }}</span>
                                     </div>
                                     @empty

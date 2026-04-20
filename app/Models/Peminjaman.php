@@ -184,6 +184,10 @@ class Peminjaman extends Model
         return match ($this->metode_pembayaran) {
             'tunai' => 'Tunai',
             'qris_all_payment' => 'QRIS All Payment',
+            'gopay' => 'GoPay',
+            'ovo' => 'OVO',
+            'dana' => 'DANA',
+            'shopeepay' => 'ShopeePay',
             default => '-',
         };
     }

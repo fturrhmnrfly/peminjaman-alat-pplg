@@ -42,7 +42,7 @@
         </div>
 
         <p style="margin:0;line-height:1.6;color:#6b7280;">
-            Silakan hubungi petugas untuk menyelesaikan pembayaran denda. Setelah pembayaran dikonfirmasi, status pengembalian akan diperbarui otomatis.
+            Silakan selesaikan pembayaran denda melalui halaman peminjam menggunakan QRIS atau e-wallet. Setelah pembayaran berhasil, status pengembalian akan diperbarui otomatis.
         </p>
     </div>
 </body>
